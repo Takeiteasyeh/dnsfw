@@ -1,3 +1,5 @@
+#include "../includes/config.h"
+
 #define DNS_SIZE 253 // 253 is max length of full domain name including dots.
 #define IP_SIZE 16 // 16 max chars for a ipv4 (fuck you ipv6)
 
@@ -10,6 +12,6 @@ typedef struct Host
 	int ports[MAX_PORTS +1];
 } host;
 
-host CreateHost(char *, int[]);
+host CreateHost(char *, int *);
 int HasIpChanged(struct Host *);
 

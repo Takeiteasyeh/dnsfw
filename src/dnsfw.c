@@ -15,7 +15,11 @@
 #include "../includes/dnsfw.h"
 #include "../includes/hosts.h"
 
+
 int main(void)
 {
-	printf("hello, world\n");	
+	printf("dnsfw %s", getversion());
+	//printf("dnsfw: v%s\n", FULL_VERSION);	
 }
+
+

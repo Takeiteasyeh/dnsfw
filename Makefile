@@ -1,6 +1,6 @@
-OBJS	= src/dnsfw.o src/config.o
-SOURCE	= src/dnsfw.c src/config.c
-HEADER	= includes/dnsfw.h includes/config.h includes/hosts.h
+OBJS	= src/dnsfw.o src/config.o src/hosts.o src/version.o
+SOURCE	= src/dnsfw.c src/config.c src/hosts.c src/version.c
+HEADER	= includes/dnsfw.h includes/config.h includes/hosts.h includes/version.h
 OUT	= dnsfw
 CC	 = gcc
 FLAGS	 = -g -c -Wall
@@ -15,6 +15,11 @@ src/dnsfw.o: src/dnsfw.c
 src/config.o: src/config.c
 	$(CC) $(FLAGS) src/config.c -o src/config.o
 
+src/hosts.o: src/hosts.c
+	$(CC) $(FLAGS) src/hosts.c -o src/hosts.o
+
+src/version.o: src/version.c
+	$(CC) $(FLAGS) src/version.c -o src/version.o
 
 clean:
 	rm -f $(OBJS) $(OUT)
