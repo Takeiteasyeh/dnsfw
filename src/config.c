@@ -5,12 +5,12 @@
 
 
 static int LoadConfig(void);
-static char *hostname(char *newline);
-static int *ports();
+//static char *hostname(char *newline);
+//static int *ports();
 
 host Hosts[MAX_DNS_ENTRIES];
 
 static int LoadConfig(void)
 {
-
+	return 0;
 }

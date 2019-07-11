@@ -9,9 +9,6 @@ LFLAGS	 = -lpthread
 all: $(OBJS)
 	$(CC) -g $(OBJS) -o $(OUT) $(LFLAGS)
 
-src/dnsfw.o: src/dnsfw.c
-	$(CC) $(FLAGS) src/dnsfw.c -o src/dnsfw.o
-
 src/config.o: src/config.c
 	$(CC) $(FLAGS) src/config.c -o src/config.o
 
@@ -21,5 +18,8 @@ src/hosts.o: src/hosts.c
 src/version.o: src/version.c
 	$(CC) $(FLAGS) src/version.c -o src/version.o
 
+src/dnsfw.o: src/dnsfw.c
+	$(CC) $(FLAGS) src/dnsfw.c -o src/dnsfw.o
+	
 clean:
 	rm -f $(OBJS) $(OUT)

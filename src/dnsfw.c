@@ -14,7 +14,7 @@
 #include "../includes/config.h"
 #include "../includes/dnsfw.h"
 #include "../includes/hosts.h"
-
+extern const char *getversion(void);
 
 int main(void)
 {
