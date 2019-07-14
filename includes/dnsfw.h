@@ -8,6 +8,12 @@
 #define DEBUG_ALL		(DEBUG_FATAL & DEBUG_ERROR & DEBUG_WARNING & DEBUG_INFO & DEBUG_DEBUG & DEBUG_TRACE)
 #define DEBUG_DEFAULTS	(DEBUG_FATAL & DEBUG_ERROR)
 
+/* Just some favorites */
+#define FAILED 0
+#define OK 1
+#define TRUE 1
+#define FALSE 0 
+
 
 
 

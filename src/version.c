@@ -1,17 +1,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
 #include "../includes/version.h"
 
 const char *getversion() //pointer return
 {
-	const size_t len1 = sizeof(VERSION_MAJOR);
-	const size_t len2 = sizeof(VERSION_MINOR);
-	const size_t len3 = sizeof(VERSION_PATCH);
-	const size_t len4 = sizeof(VERSION_TAG);
-	const size_t lentotal = len1 + len2 + len3 + len4;
+	const size_t lentotal = sizeof(VERSION_MAJOR) + sizeof(VERSION_MINOR) + sizeof(VERSION_PATCH) + sizeof(VERSION_TAG) + 4;
 
-	char *result = malloc(len1 + len2 + len3 + len4 + 4); // with . - and null term
+	char *result = malloc(lentotal); // with . - and null term
 
 	if (result == NULL)
 	{
@@ -19,9 +16,11 @@ const char *getversion() //pointer return
 		exit(1);
 	}
 
-	int j = snprintf(result, lentotal + 4, VERSION_FORMAT, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_TAG);
+	int j = snprintf(result, lentotal, VERSION_FORMAT, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_TAG);
 
-	printf("result: %s - count: %d\n", result, j);
+	assert(j <= lentotal);
+	
+	printf("result: %lu - count: %d\n", lentotal, j);
 
 	return result;
 	//ch

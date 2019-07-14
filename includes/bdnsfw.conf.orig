@@ -1,0 +1,14 @@
+# backup line incase you dont listen to the warning, remove the #...
+#!V:1
+# DO NOT REMOVE OR MODIFY THE FOLLOWING LINE OR CORRUPTION COULD OCCUR
+!V:1
+# Bacon Dns Firewall Config File
+# Hashbang represents a comment in this configuration
+#
+# Please store as:
+#
+# the.rnds.com 23 1000 400
+#
+# or, for all ports and proto:
+#
+# the.rdns.com 0
