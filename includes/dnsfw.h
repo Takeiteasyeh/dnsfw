@@ -16,7 +16,9 @@
 
 
 
-
+int process_cli_args(int argc, char *argv[]);
+void process_cli_help(void);
+void process_cli_help_param(char *topic);
 //#define FULL_VERSION (MAJOR_VERSION + MINOR_VERSION + PATCH_VERSION + TAG_VERSION)
 /* #define FULL_VERSION ((sprintf("%d.%d.%d-%s", MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION, TAG_VERSION))) */
 
