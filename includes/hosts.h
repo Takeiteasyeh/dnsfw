@@ -9,9 +9,11 @@ typedef struct Host
 	char hostname[DNS_SIZE + 1];
 	char currentIp[IP_SIZE + 1];
 	char lastIp[IP_SIZE + 1];
-	int ports[MAX_PORTS +1];
+	unsigned short ports[MAX_PORTS +1];
+	unsigned short int total;
 } host;
 
+host newhost(host *head, char *name);
 host CreateHost(char *, int *);
 int HasIpChanged(struct Host *);
 

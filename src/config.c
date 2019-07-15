@@ -8,10 +8,11 @@
 
 
 int LoadConfig(void);
+host *headhost = NULL;
 //static char *hostname(char *newline);
 //static int *ports();
 
-host Hosts[MAX_DNS_ENTRIES];
+
 
 int LoadConfig(void)
 {
@@ -21,8 +22,16 @@ int LoadConfig(void)
 	__ssize_t read;
 	FILE *file = fopen(CONF_FILE, "r");
 	char name[DNS_SIZE + 1];
-	int portArray[MAX_PORTS];
+	char portlist[255];
+	char pl[6];
+	unsigned short portArray[MAX_PORTS + 1]; // 0, 65,535
+	//host Hosts[MAX_DNS_ENTRIES];
+	headhost = malloc(sizeof(host));
 
+	if (headhost == NULL)
+	{
+		// error
+	}
 
 	if (file == NULL)
 	{
@@ -31,6 +40,8 @@ int LoadConfig(void)
 	}
 
 	int i = 0;
+
+
 	while ((read = getline(&line, &len, file)) != -1)
 	{
 		i++; // for error reporting purposes, always increase this.
@@ -67,24 +78,42 @@ int LoadConfig(void)
 			continue;
 		} // end of version tag
 
-		// if we make it here, continue trying to process it.
-	//	char name[DNS_SIZE + 1];
-	//	int portArray[MAX_PORTS];
+		char *token = strtok(line, " "); // seperate by space
+		unsigned short int waitHost = TRUE;
 
-	// verify we have dns.something 20 30 40
-	printf("\n%d:%s\n", i, line);
-		if (sscanf(line, "%s %d", name, portArray[MAX_PORTS]))
+		while (token != NULL)
 		{
-			printf("hostname: %s\n", name);
+			host curr;
 
-			for (int j = 0; j < MAX_PORTS; j++)
+			// we should verify the hostname here before continuning...
+			if (waitHost)
 			{
-				printf("index: %d - port: %d\n", j, portArray[j]);
-			}
-			
-			continue;
+				// is this a first host or a extra?
+				if (strlen(headhost->hostname) == 0) // first
+				{
+					strcpy(headhost->hostname, token);
+					//*headhost->hostname = token;
+					printf("host set: %s\n", headhost->hostname);
+				}
 
+				else
+				{
+					curr = newhost(headhost, token);
+				}
+				
+			}
+			printf("got: %s\n", token);
+			token = strtok(NULL, " ");
 		}
+		// if we make it here, continue trying to process it.
+		/*while (*line)
+		{
+			int hasdot = 0;
+			char *myName;
+
+			printf("%c", *line++);
+		} */
+	
 	}
 
 
