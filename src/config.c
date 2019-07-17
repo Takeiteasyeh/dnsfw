@@ -5,6 +5,7 @@
 #include "../includes/config.h"
 #include "../includes/hosts.h"
 #include "../includes/dnsfw.h"
+#include "../includes/debug.h"
 
 
 int LoadConfig(void);
@@ -21,10 +22,10 @@ int LoadConfig(void)
 	size_t len = 0;
 	__ssize_t read;
 	FILE *file = fopen(CONF_FILE, "r");
-	char name[DNS_SIZE + 1];
-	char portlist[255];
-	char pl[6];
-	unsigned short portArray[MAX_PORTS + 1]; // 0, 65,535
+	//char name[DNS_SIZE + 1];
+	//char portlist[255];
+	//char pl[6];
+	//unsigned short portArray[MAX_PORTS + 1]; // 0, 65,535
 	//host Hosts[MAX_DNS_ENTRIES];
 	headhost = malloc(sizeof(host));
 
@@ -79,30 +80,52 @@ int LoadConfig(void)
 		} // end of version tag
 
 		char *token = strtok(line, " "); // seperate by space
+		host curr;
 		unsigned short int waitHost = TRUE;
 
 		while (token != NULL)
 		{
-			host curr;
-
 			// we should verify the hostname here before continuning...
 			if (waitHost)
 			{
-				// is this a first host or a extra?
-				if (strlen(headhost->hostname) == 0) // first
-				{
-					strcpy(headhost->hostname, token);
-					//*headhost->hostname = token;
-					printf("host set: %s\n", headhost->hostname);
-				}
+				/*	if (strlen(token) > sizeof(headhost->hostname))
+					{
+						printf("Fatal: Size of hostname exceeds allowed characters: %s", token);
+						exit(1);
+					}
 
-				else
-				{
-					curr = newhost(headhost, token);
+					strcpy(headhost->hostname, token);
+					
+					printf("host set: %s [%lu] [hname: %lu]\n", headhost->hostname, strlen(token), sizeof(headhost->hostname));
+					waitHost = FALSE;
 				}
+		*/
+				// we are not the first entry, simply create a new record pointer
+				//else
+			//	{
+					curr = addhost(headhost, token);
+					printf("host add: %s\n", curr.hostname);
+					waitHost = FALSE;
+			//	}
 				
 			}
-			printf("got: %s\n", token);
+
+			// We are not waiting for a hostname, assume (but verify) its a port list
+			else
+			{
+			if (!isdigit(token))
+			{
+					printf("Host %s contains non-port %s", curr.hostname, token);
+				//	log(DEBUG_ERROR, sprintf("Host %s contains non-port %s", curr.hostname, token));
+				//	exit(1); // should not be reachable
+				}
+
+			//	else
+			//	{
+			///	//	printf("opening %s:%s", curr.hostname, token);
+			//	}
+			}
+		//	printf("got: %s\n", token);
 			token = strtok(NULL, " ");
 		}
 		// if we make it here, continue trying to process it.

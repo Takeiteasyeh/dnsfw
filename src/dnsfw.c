@@ -15,12 +15,16 @@
 #include "../includes/config.h"
 #include "../includes/dnsfw.h"
 #include "../includes/hosts.h"
+#include "../includes/debug.h"
+
 extern const char *getversion(void);
 extern int LoadConfig(void);
 
 int main(int argc, char *argv[])
 {
-	printf("dnsfw v%s\n", getversion());
+	to_log(DEBUG_DEBUG, "starting up...");
+
+	printf("dnsfw v%s (debug type: %s)\n", getversion(), levelname(DEBUG_DEBUG));
 
 	// check command line arguments
 	if (argc > 1)
