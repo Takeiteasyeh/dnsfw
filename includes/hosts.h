@@ -13,7 +13,7 @@ typedef struct Host
 	unsigned short int total;
 } host;
 
-host addhost(host *head, char *name);
+host *addhost(host *head, char *name);
 
 int HasIpChanged(struct Host *);
 

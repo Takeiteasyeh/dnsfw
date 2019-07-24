@@ -19,6 +19,7 @@ int LoadConfig(void)
 {
 	char *line = NULL;
 	int version = 0;
+	unsigned short int waitHost = TRUE;
 	size_t len = 0;
 	__ssize_t read;
 	FILE *file = fopen(CONF_FILE, "r");
@@ -45,6 +46,7 @@ int LoadConfig(void)
 
 	while ((read = getline(&line, &len, file)) != -1)
 	{
+		waitHost = TRUE;
 		i++; // for error reporting purposes, always increase this.
 
 		// skip all comments, empty lines
@@ -80,45 +82,63 @@ int LoadConfig(void)
 		} // end of version tag
 
 		char *token = strtok(line, " "); // seperate by space
-		host curr;
-		unsigned short int waitHost = TRUE;
+		host *curr;
+		
 
 		while (token != NULL)
 		{
-			// we should verify the hostname here before continuning...
+			// We are waiting for a hostname (ie: newline)
 			if (waitHost)
 			{
-				/*	if (strlen(token) > sizeof(headhost->hostname))
-					{
-						printf("Fatal: Size of hostname exceeds allowed characters: %s", token);
-						exit(1);
-					}
-
-					strcpy(headhost->hostname, token);
-					
-					printf("host set: %s [%lu] [hname: %lu]\n", headhost->hostname, strlen(token), sizeof(headhost->hostname));
-					waitHost = FALSE;
+				// dtui
+				if (strlen(token) > (sizeof(headhost->hostname) -1))
+				{
+					printf("Fatal: Size of hostname exceeds allowed characters: %s", token);
+					exit(1);
 				}
-		*/
-				// we are not the first entry, simply create a new record pointer
-				//else
-			//	{
-					curr = addhost(headhost, token);
-					printf("host add: %s\n", curr.hostname);
-					waitHost = FALSE;
-			//	}
+
+				curr = addhost(headhost, token);
+				printf("host add: %s\n", curr->hostname);
+				waitHost = 0; // mark that we are waiting for a port now
+			
 				
-			}
+			}  
 
 			// We are not waiting for a hostname, assume (but verify) its a port list
 			else
 			{
-			if (!isdigit(token))
-			{
-					printf("Host %s contains non-port %s", curr.hostname, token);
-				//	log(DEBUG_ERROR, sprintf("Host %s contains non-port %s", curr.hostname, token));
-				//	exit(1); // should not be reachable
+				size_t s;
+				
+				s = strlen(token) - 1;
+
+				if (token[s] == '\n')
+					token[s] = '\0';
+
+				// cycle through and confirm we are only a number, deal with bounds later.
+				for (size_t k = 0; k <= s; k++)
+				{
+					//there is probably a cleaner way of doing all this... we will save it for when
+					// i actually know wtf im doing in this language (aka v2)
+				//	if (strcmp(&token[k], "\n"))
+				//	{
+				//		strcpy(&token[k], "\0");
+				//	}
+
+					if ( token[k] == '\n')
+						token[k] = '\0';
+
+					if (!isdigit(token[k]) && ((token[k] != '\0')))
+					{
+						printf("%s:%d > Host %s contains non-numeric port '%s'\n", CONF_FILE, i, curr->hostname, token);
+						exit(1);
+					}
+
+					else if (token[k-1] == '\0')
+						break; 
 				}
+
+				// valid port if we havn't died
+				printf("AddPort: %s:%s\n", curr->hostname, token);
 
 			//	else
 			//	{

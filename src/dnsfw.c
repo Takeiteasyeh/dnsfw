@@ -79,43 +79,7 @@ int process_cli_args(int argc, char *argv[])
 	} 
 
 
-/*
-	switch (argv[1])
-	{
-		case '-h':
-		case '--help':
-			if (argc > 2)
-				process_cli_help_param(argv[3]);
-			else
-				process_cli_help();
-		break; // exit code 0
 
-		case '-g':
-		case '-genconf':
-			process_cli_genconf();
-			break;
-
-		case '-l':
-		case '--list':
-			// not yet  available;
-			printf("not yet implemented\n");
-			break;
-
-		case '-a':
-		case '--add':
-			printf("not yet implemented\n");
-			break;
-
-		case '-r':
-		case '--remove':
-			printf("not yet implemented\n");
-			break;
-
-		default:
-			printf("Unknown arguments [%s] .. ignoring...\n", argv[2]);
-			retcode = 1;
-			break;
-	} */
 
 	return retcode;
 }

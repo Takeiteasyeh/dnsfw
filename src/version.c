@@ -20,9 +20,5 @@ const char *getversion() //pointer return
 
 	assert(j <= lentotal);
 	
-	printf("result: %lu - count: %d\n", lentotal, j);
-
 	return result;
-	//ch
-	//return sprintf("%d.%d", VERSION_MAJOR, VERSION_MINOR);
 }

@@ -8,7 +8,7 @@
  * shit out in this block since creating objects and creating pointers in different locations of the
  * detached script is breaking things, including me. -rlynk
  */
-host addhost(host *head, char *name)
+host *addhost(host *head, char *name)
 {
 	if (strlen(name) > DNS_SIZE)
 	{
@@ -45,7 +45,7 @@ host addhost(host *head, char *name)
 	strcpy(parent->next->hostname, name);
 	parent->next->next = NULL;
 
-	return *parent->next;
+	return parent->next;
 
 }
 
