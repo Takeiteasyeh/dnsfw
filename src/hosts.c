@@ -12,6 +12,19 @@ int addport(host *selected, int port)
 	if (total == MAX_PORTS)
 		return FAILED;
 
+	if (port == 0)
+	{
+		if (selected->totalports > 0)
+		for (int i = 0; i < selected->totalports; i++)
+		{
+			selected->ports[i] = 0;
+		}
+
+		// reset our count
+		selected->totalports = 1;
+
+		return OK;
+	}
 	// ensure our port falls within actual port limits
 	if ((port < 1) || (port > 65535))
 		return FAILED;
@@ -39,9 +52,14 @@ host *addhost(host *head, char *name)
 	host *parent = head;
 	//host *current;
 
+	// are we initialized yet?
+	if (head == NULL)
+		head = malloc(sizeof(host));
+
 	// if this is the first entry we dont do next things
 	if (strlen(parent->hostname) == 0)
 	{
+		strncpy(parent->hostname, name, sizeof(parent->hostname) - 1);
 
 	}
 

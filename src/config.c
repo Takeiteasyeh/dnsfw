@@ -2,20 +2,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include "../includes/config.h"
-#include "../includes/hosts.h"
-#include "../includes/dnsfw.h"
-#include "../includes/debug.h"
+#include "config.h"
+//#include "hosts.h"
+#include "dnsfw.h"
+#include "debug.h"
 
 
-int LoadConfig(void);
-host *headhost = NULL;
-//static char *hostname(char *newline);
-//static int *ports();
-
-
-
-int LoadConfig(void)
+int LoadConfig(host *headhost)
 {
 	char *line = NULL;
 	int linecount = 0;
@@ -24,7 +17,7 @@ int LoadConfig(void)
 	size_t len = 0;
 	__ssize_t read;
 	FILE *file = fopen(CONF_FILE, "r");
-	headhost = malloc(sizeof(host));
+//	headhost = malloc(sizeof(host));
 
 	if (headhost == NULL)
 	{
@@ -122,13 +115,20 @@ int LoadConfig(void)
 
 					else if (token[k-1] == '\0')
 						break; 
+					
 				}
 
 				// valid port if we havn't died
 				// the following if/else is a display rewrite only for adding port ALL
-				if (token[1] == 0)
-					printf("Adding: %s:* ... ", curr->hostname);
-			
+				if ((!strncmp(token, "", 1)) && (atoi(token) == 0))
+				{
+					printf("Adding: %s:0 ... ", curr->hostname);
+					curr->is_wildcard = TRUE;
+
+					if (curr->totalports > 0)
+						printf("[usurps %d previous ports] ", curr->totalports);
+				}
+
 				else
 					printf("Adding: %s:%s ... " , curr->hostname, token);
 
@@ -138,7 +138,10 @@ int LoadConfig(void)
 					exit(1);
 				}
 				// real work
-				if (addport(curr, (int)*token))
+				if ((curr->is_wildcard) && (atoi(token) > 0))
+					printf("Fail! Already applied via '0' entry\n");
+
+				else if (addport(curr, atoi(token)))
 				{
 					printf("Success! %d/%d ports\n", curr->totalports, MAX_PORTS);
 				}

@@ -12,14 +12,17 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h> // malloc, calloc, realloc, free
+//#include "hosts.h"
 #include "config.h"
 #include "dnsfw.h"
-#include "hosts.h"
+
 #include "debug.h"
 #include "version.h"
 
 int main(int argc, char *argv[])
 {
+	host *headhost = NULL; 
+	headhost = malloc(sizeof(host));
 //	to_log(DEBUG_DEBUG, "starting up...");
 
 	printf("dnsfw v%s starting...\n", getversion());
@@ -32,7 +35,7 @@ int main(int argc, char *argv[])
 			exit(1);
 	}
 	printf("logging to %s\nparsing %s...\n", CONF_LOG, CONF_FILE);
-	LoadConfig();
+	LoadConfig(headhost);
 
 	//printf("dnsfw: v%s\n", FULL_VERSION);	
 }

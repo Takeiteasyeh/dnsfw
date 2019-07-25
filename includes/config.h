@@ -14,15 +14,16 @@
  * #
  * # the.rdns.com 0
  */
+#include "hosts.h"
 
 #define CONF_FILE "bdnsfw.conf"
 #define CONF_LOG "bdnsfw.log"
 #define CONF_VERSION 1 // increment this by 1 every format change, make sure to update the database (somehow)
 #define MAX_LINE_SIZE 1024 // (1kb)
-#define MAX_PORTS 50 // max ports per host
+
 #define MAX_DNS_ENTRIES 50 // max entries to store
 
 #define TYPE_IPTABLES 	0x001
 #define TYPE_IPCOP 		0x002
 
-int LoadConfig(void);
+int LoadConfig(host *head);
