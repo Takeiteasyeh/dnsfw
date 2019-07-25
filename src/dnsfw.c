@@ -22,6 +22,7 @@
 int main(int argc, char *argv[])
 {
 	host *headhost = NULL; 
+	host *cycle = NULL;
 	headhost = malloc(sizeof(host));
 //	to_log(DEBUG_DEBUG, "starting up...");
 
@@ -36,6 +37,16 @@ int main(int argc, char *argv[])
 	}
 	printf("logging to %s\nparsing %s...\n", CONF_LOG, CONF_FILE);
 	LoadConfig(headhost);
+
+	printf("Resolving hosts...\n");
+
+	cycle = headhost;
+
+	while (cycle != NULL)
+	{
+		printf("%s is %s\n", cycle->hostname, "na");
+		cycle = cycle->next;
+	}
 
 	//printf("dnsfw: v%s\n", FULL_VERSION);	
 }

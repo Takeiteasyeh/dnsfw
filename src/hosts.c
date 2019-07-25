@@ -60,6 +60,12 @@ host *addhost(host *head, char *name)
 	if (strlen(parent->hostname) == 0)
 	{
 		strncpy(parent->hostname, name, sizeof(parent->hostname) - 1);
+		strncpy(parent->lastIp, "0", 1);
+		strncpy(parent->currentIp, "0", 1);
+		parent->prev = NULL;
+		parent->next = NULL;
+
+		return parent;
 
 	}
 
@@ -87,4 +93,5 @@ host *addhost(host *head, char *name)
 	return parent->next;
 
 }
+
 
