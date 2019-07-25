@@ -18,6 +18,7 @@ host *headhost = NULL;
 int LoadConfig(void)
 {
 	char *line = NULL;
+	int linecount = 0;
 	int version = 0;
 	unsigned short int waitHost = TRUE;
 	size_t len = 0;
@@ -41,13 +42,11 @@ int LoadConfig(void)
 		return FAILED;
 	}
 
-	int i = 0;
-
 
 	while ((read = getline(&line, &len, file)) != -1)
 	{
 		waitHost = TRUE;
-		i++; // for error reporting purposes, always increase this.
+		linecount++; // for error reporting purposes, always increase this.
 
 		// skip all comments, empty lines
 		if ((line[0] == '#') || (line[0] == '\n')) // comments (also 0x24 ? or \35 ?)
@@ -60,14 +59,14 @@ int LoadConfig(void)
 			if (version > 0)
 			{
 				// We already have a version tag so why are we here?
-				printf("bdnsdw.conf:%d -> duplicate version tag.\n", i);
+				printf("bdnsdw.conf:%d -> duplicate version tag.\n", linecount);
 				exit(0);
 			}
 
 			if (!isdigit(line[3]))
 			{
 				// Our version tag is not a numerical value, single digit in this case.
-				printf("bdnsdw.conf:%d -> version %c is not numeric\n", i, line[3]);
+				printf("bdnsdw.conf:%d -> version %c is not numeric\n", linecount, line[3]);
 				exit(0);
 			}
 			// the version of our database is too old to continue in this way.
@@ -93,7 +92,8 @@ int LoadConfig(void)
 				// dtui
 				if (strlen(token) > (sizeof(headhost->hostname) -1))
 				{
-					printf("Fatal: Size of hostname exceeds allowed characters: %s", token);
+					//printf("%s:%d > Host %s contains non-numeric port '%s'\n", CONF_FILE, linecount, curr->hostname, token);
+					printf("%s:%d > Size of hostname exceeds allowed characters: %lu of max %d\n", CONF_FILE, linecount, strlen(token), DNS_SIZE);
 					exit(1);
 				}
 
@@ -119,17 +119,9 @@ int LoadConfig(void)
 				{
 					//there is probably a cleaner way of doing all this... we will save it for when
 					// i actually know wtf im doing in this language (aka v2)
-				//	if (strcmp(&token[k], "\n"))
-				//	{
-				//		strcpy(&token[k], "\0");
-				//	}
-
-					if ( token[k] == '\n')
-						token[k] = '\0';
-
 					if (!isdigit(token[k]) && ((token[k] != '\0')))
 					{
-						printf("%s:%d > Host %s contains non-numeric port '%s'\n", CONF_FILE, i, curr->hostname, token);
+						printf("%s:%d > Host %s contains non-numeric port '%s'\n", CONF_FILE, linecount, curr->hostname, token);
 						exit(1);
 					}
 
@@ -138,7 +130,12 @@ int LoadConfig(void)
 				}
 
 				// valid port if we havn't died
-				printf("AddPort: %s:%s\n", curr->hostname, token);
+				// the following if/else is a display rewrite only for adding port ALL
+				if (token[1] == 0)
+					printf("AddPort: %s:All\n", curr->hostname);
+			
+				else
+					printf("AddPort: %s:%s\n", curr->hostname, token);
 
 			//	else
 			//	{
@@ -161,7 +158,7 @@ int LoadConfig(void)
 
 
 
-		printf("%d: %s", i, line);
+		//printf("%d: %s", linecount, line);
 	
 	return OK;
 
