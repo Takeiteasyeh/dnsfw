@@ -13,7 +13,7 @@ void to_log(int level, char *message)
 {
 	if ((level & DEBUG_LEVEL) == 0)
 	{
-		printf("we have this debug level\n");
+		return;
 	}
 
 	FILE *fptr;

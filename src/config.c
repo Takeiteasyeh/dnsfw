@@ -24,11 +24,6 @@ int LoadConfig(void)
 	size_t len = 0;
 	__ssize_t read;
 	FILE *file = fopen(CONF_FILE, "r");
-	//char name[DNS_SIZE + 1];
-	//char portlist[255];
-	//char pl[6];
-	//unsigned short portArray[MAX_PORTS + 1]; // 0, 65,535
-	//host Hosts[MAX_DNS_ENTRIES];
 	headhost = malloc(sizeof(host));
 
 	if (headhost == NULL)
@@ -98,7 +93,7 @@ int LoadConfig(void)
 				}
 
 				curr = addhost(headhost, token);
-				printf("host add: %s\n", curr->hostname);
+		//		printf("host add: %s\n", curr->hostname);
 				waitHost = 0; // mark that we are waiting for a port now
 			
 				
@@ -132,19 +127,26 @@ int LoadConfig(void)
 				// valid port if we havn't died
 				// the following if/else is a display rewrite only for adding port ALL
 				if (token[1] == 0)
-					printf("AddPort: %s:All\n", curr->hostname);
+					printf("Adding: %s:* ... ", curr->hostname);
 			
 				else
-					printf("AddPort: %s:%s\n", curr->hostname, token);
+					printf("Adding: %s:%s ... " , curr->hostname, token);
 
-				if (addport(curr, token))
+				if ((atoi(token) < 0) || (atoi(token) > 65535)) // not a normal port
 				{
-
+					printf("Failed: Port %d is outside range of 0(all) or 1-65535\n", atoi(token));
+					exit(1);
+				}
+				// real work
+				if (addport(curr, (int)*token))
+				{
+					printf("Success! %d/%d ports\n", curr->totalports, MAX_PORTS);
 				}
 
 				else
 				{
-					
+					if (curr->totalports == MAX_PORTS)
+						printf("Fail! Max ports for this host reached!\n");
 				}
 
 			}

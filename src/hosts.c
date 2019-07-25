@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "hosts.h"
+#include "dnsfw.h"
 
 
 int addport(host *selected, int port)
@@ -9,17 +10,17 @@ int addport(host *selected, int port)
 	int total = selected->totalports;
 	// do not exceed our buffer
 	if (total == MAX_PORTS)
-		return 0;
+		return FAILED;
 
 	// ensure our port falls within actual port limits
 	if ((port < 1) || (port > 65535))
-		return 0;
+		return FAILED;
 
 	// lets continue at this point and add the port to index
 	selected->ports[total] = port;
 	selected->totalports++;
 
-	return 
+	return OK;
 }
 /***
  * Im tired of fucking with this code... addhost is called for even the head host. we will figure that
@@ -36,7 +37,7 @@ host *addhost(host *head, char *name)
 	}
 
 	host *parent = head;
-	host *current;
+	//host *current;
 
 	// if this is the first entry we dont do next things
 	if (strlen(parent->hostname) == 0)

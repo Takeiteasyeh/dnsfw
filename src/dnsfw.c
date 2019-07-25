@@ -12,20 +12,17 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h> // malloc, calloc, realloc, free
-
 #include "config.h"
 #include "dnsfw.h"
 #include "hosts.h"
 #include "debug.h"
-
-extern const char *getversion(void);
-extern int LoadConfig(void);
+#include "version.h"
 
 int main(int argc, char *argv[])
 {
-	to_log(DEBUG_DEBUG, "starting up...");
+//	to_log(DEBUG_DEBUG, "starting up...");
 
-	printf("dnsfw v%s (debug type: %s)\n", getversion(), levelname(DEBUG_DEBUG));
+	printf("dnsfw v%s starting...\n", getversion());
 
 	// check command line arguments
 	if (argc > 1)
@@ -34,7 +31,7 @@ int main(int argc, char *argv[])
 		if (!process_cli_args(argc, argv))
 			exit(1);
 	}
-	printf("reading config...");
+	printf("logging to %s\nparsing %s...\n", CONF_LOG, CONF_FILE);
 	LoadConfig();
 
 	//printf("dnsfw: v%s\n", FULL_VERSION);	
