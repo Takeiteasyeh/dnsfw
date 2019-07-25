@@ -137,12 +137,18 @@ int LoadConfig(void)
 				else
 					printf("AddPort: %s:%s\n", curr->hostname, token);
 
-			//	else
-			//	{
-			///	//	printf("opening %s:%s", curr.hostname, token);
-			//	}
+				if (addport(curr, token))
+				{
+
+				}
+
+				else
+				{
+					
+				}
+
 			}
-		//	printf("got: %s\n", token);
+		
 			token = strtok(NULL, " ");
 		}
 		// if we make it here, continue trying to process it.

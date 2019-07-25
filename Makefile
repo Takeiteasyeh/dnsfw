@@ -5,24 +5,26 @@ OUT	= dnsfw
 CC	 = gcc
 FLAGS	 = -g -c -Wall
 LFLAGS	 = -lpthread
+IDIR = includes
+CFLAGS = -I$(IDIR)
 
 all: $(OBJS)
-	$(CC) -g $(OBJS) -o $(OUT) $(LFLAGS)
+	$(CC) -g $(OBJS) -o $(OUT) $(LFLAGS) $(CFLAGS)
 
 src/config.o: src/config.c
-	$(CC) $(FLAGS) src/config.c -o src/config.o
+	$(CC) $(FLAGS) src/config.c -o src/config.o $(CFLAGS)
 
 src/hosts.o: src/hosts.c
-	$(CC) $(FLAGS) src/hosts.c -o src/hosts.o
+	$(CC) $(FLAGS) src/hosts.c -o src/hosts.o $(CFLAGS)
 
 src/version.o: src/version.c
-	$(CC) $(FLAGS) src/version.c -o src/version.o
+	$(CC) $(FLAGS) src/version.c -o src/version.o $(CFLAGS)
 
 src/dnsfw.o: src/dnsfw.c
-	$(CC) $(FLAGS) src/dnsfw.c -o src/dnsfw.o
+	$(CC) $(FLAGS) src/dnsfw.c -o src/dnsfw.o $(CFLAGS)
 
 src/debug.o: src/debug.c
-	$(CC) $(FLAGS) src/debug.c -o src/debug.o
+	$(CC) $(FLAGS) src/debug.c -o src/debug.o $(CFLAGS)
 
 clean:
 	rm -f $(OBJS) $(OUT)

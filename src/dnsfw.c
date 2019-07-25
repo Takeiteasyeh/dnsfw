@@ -12,10 +12,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h> // malloc, calloc, realloc, free
-#include "../includes/config.h"
-#include "../includes/dnsfw.h"
-#include "../includes/hosts.h"
-#include "../includes/debug.h"
+
+#include "config.h"
+#include "dnsfw.h"
+#include "hosts.h"
+#include "debug.h"
 
 extern const char *getversion(void);
 extern int LoadConfig(void);

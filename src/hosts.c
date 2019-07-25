@@ -1,8 +1,26 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../includes/hosts.h"
+#include "hosts.h"
 
+
+int addport(host *selected, int port)
+{
+	int total = selected->totalports;
+	// do not exceed our buffer
+	if (total == MAX_PORTS)
+		return 0;
+
+	// ensure our port falls within actual port limits
+	if ((port < 1) || (port > 65535))
+		return 0;
+
+	// lets continue at this point and add the port to index
+	selected->ports[total] = port;
+	selected->totalports++;
+
+	return 
+}
 /***
  * Im tired of fucking with this code... addhost is called for even the head host. we will figure that
  * shit out in this block since creating objects and creating pointers in different locations of the
@@ -10,6 +28,7 @@
  */
 host *addhost(host *head, char *name)
 {
+	// just incase you play with my memory, ill double check here too.
 	if (strlen(name) > DNS_SIZE)
 	{
 		printf("error: dns name exceeds rfc standard of 253 characters (now: %lu)\n", strlen(name));
@@ -44,6 +63,7 @@ host *addhost(host *head, char *name)
 
 	strcpy(parent->next->hostname, name);
 	parent->next->next = NULL;
+	parent->next->totalports = 0;
 
 	return parent->next;
 
