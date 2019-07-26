@@ -12,10 +12,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h> // malloc, calloc, realloc, free
-//#include "hosts.h"
+#include "iptables.h"
 #include "config.h"
 #include "dnsfw.h"
-
 #include "debug.h"
 #include "version.h"
 
@@ -44,7 +43,19 @@ int main(int argc, char *argv[])
 
 	while (cycle != NULL)
 	{
-		printf("%s is %s\n", cycle->hostname, "na");
+		char *ip = resolve(cycle->hostname);
+
+		if (ip == NULL)
+		{
+			printf("%s does not resolve, or resolves more than once, skipping.", cycle->hostname);
+			cycle = cycle->next;
+			continue;
+		}
+
+		// lets make sure that we do the firewall updates if the ip's do not match
+
+		printf("%s is %s\n", cycle->hostname, ip);
+		iptables_add(ip, 22);
 		cycle = cycle->next;
 	}
 
@@ -150,4 +161,12 @@ void process_cli_help_param(char *topic)
 }
 
 
+void background_agent(void)
+{
 
+}
+
+int run_dns_updates(host *head)
+{
+
+}

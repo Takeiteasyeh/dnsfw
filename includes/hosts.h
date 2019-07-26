@@ -20,5 +20,6 @@ typedef struct Host
 host *addhost(host *head, char *name);
 int addport(host *selected, int port);
 
-int HasIpChanged(struct Host *);
+int ip_modified(struct Host *);
+char *resolve(char *host);
 

@@ -1,8 +1,14 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include<sys/types.h>
 #include "hosts.h"
 #include "dnsfw.h"
+#include "debug.h"
 
 
 int addport(host *selected, int port)
@@ -92,6 +98,33 @@ host *addhost(host *head, char *name)
 
 	return parent->next;
 
+}
+
+char *resolve(char *host)
+{
+	struct hostent *he;
+	struct in_addr **addr_list;
+
+	he = gethostbyname(host);
+
+	// an error occured, add logging at some time in the future
+	if (he == NULL)
+		return NULL;
+
+	addr_list = (struct in_addr **)he->h_addr_list;
+
+	/* multiple returns from dns is
+	 * a security risk, and somewhat contrary to dynamic dns */
+	if (addr_list[1] != NULL)
+	{
+//		char *msg;
+//	printf("%s resolves to multiple addresses and will be ignored for security.", host));
+		to_log(DEBUG_WARNING, "multiple ips for host");
+
+		return NULL;
+	}
+
+	return inet_ntoa(*addr_list[0]);
 }
 
 
