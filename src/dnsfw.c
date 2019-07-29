@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h> // malloc, calloc, realloc, free
+#include <unistd.h>
 #include "iptables.h"
 #include "config.h"
 #include "dnsfw.h"
@@ -21,7 +22,6 @@
 int main(int argc, char *argv[])
 {
 	host *headhost = NULL; 
-	host *cycle = NULL;
 	headhost = malloc(sizeof(host));
 //	to_log(DEBUG_DEBUG, "starting up...");
 
@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 	if (getuid() > 0)
 	{
 		printf("error: please run as root.\n");
-		exit(1);
+		//exit(1);
 	}
 
 	// check command line arguments
@@ -45,26 +45,9 @@ int main(int argc, char *argv[])
 	LoadConfig(headhost);
 
 	printf("Resolving hosts...\n");
+	run_dns_updates(headhost);
 
-	cycle = headhost;
 
-	while (cycle != NULL)
-	{
-		char *ip = resolve(cycle->hostname);
-
-		if (ip == NULL)
-		{
-			printf("%s does not resolve, or resolves more than once, skipping.", cycle->hostname);
-			cycle = cycle->next;
-			continue;
-		}
-
-		// lets make sure that we do the firewall updates if the ip's do not match
-
-		printf("%s is %s\n", cycle->hostname, ip);
-		iptables_add(ip, 22);
-		cycle = cycle->next;
-	}
 
 	//printf("dnsfw: v%s\n", FULL_VERSION);	
 }
@@ -173,7 +156,57 @@ void background_agent(void)
 
 }
 
-int run_dns_updates(host *head)
+void run_dns_updates(host *head)
 {
+	host *cycle = NULL;
+	cycle = head;
 
+	while (cycle != NULL)
+	{
+		char *ip = resolve(cycle->hostname);
+		int remove = FALSE;
+
+		if (ip == NULL)
+		{
+			printf("%s does not resolve, or resolves more than once, skipping.", cycle->hostname);
+			cycle = cycle->next;
+			continue;
+		}
+
+		// if new ip is same as current we also continue.
+		else if (strcmp(ip, cycle->currentIp) == 0)
+		{
+			printf("same ip, skip! %s\n", cycle->hostname);
+			cycle = cycle->next;
+			continue;
+		}
+
+		// we need to update this entry
+		else
+		{
+			// if ip is not 0 we do need to remove old entries
+			if (strcmp(cycle->currentIp, "0") != 0)
+			{
+				printf("%s: remove flag set ip %s\n", cycle->hostname, cycle->currentIp);
+				remove = TRUE; // just set the flag so we can do it when we cycle ports
+			}
+
+			// check if wildcard entry
+			if (cycle->is_wildcard)
+			{
+				
+			}
+			// cycle through all our ports,
+
+			
+
+			printf("update, %s\n", cycle->hostname);
+		}
+
+		// lets make sure that we do the firewall updates if the ip's do not match
+
+		printf("%s is %s [old is %s]\n", cycle->hostname, ip, cycle->currentIp);
+		//iptables_add(ip, 22);
+		cycle = cycle->next;
+	}
 }

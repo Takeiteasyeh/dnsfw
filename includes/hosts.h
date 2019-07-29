@@ -10,7 +10,6 @@ typedef struct Host
 	struct Host *next, *prev;
 	char hostname[DNS_SIZE + 1];
 	char currentIp[IP_SIZE + 1];
-	char lastIp[IP_SIZE + 1];
 	unsigned short ports[MAX_PORTS +1];
 	unsigned short int totalports;
 	unsigned short int is_wildcard : 1;
