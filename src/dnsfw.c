@@ -27,6 +27,13 @@ int main(int argc, char *argv[])
 
 	printf("dnsfw v%s starting...\n", getversion());
 
+	// we need to run as root
+	if (getuid() > 0)
+	{
+		printf("error: please run as root.\n");
+		exit(1);
+	}
+
 	// check command line arguments
 	if (argc > 1)
 	{
