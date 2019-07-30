@@ -67,7 +67,7 @@ host *addhost(host *head, char *name)
 	{
 		strncpy(parent->hostname, name, sizeof(parent->hostname) - 1);
 	//	strncpy(parent->lastIp, "0", 1);
-		strncpy(parent->currentIp, "0", 2);
+		strcpy(parent->currentIp, "0");
 		parent->prev = NULL;
 		parent->next = NULL;
 
@@ -93,6 +93,7 @@ host *addhost(host *head, char *name)
 //	current = parent->next;
 
 	strcpy(parent->next->hostname, name);
+	strcpy(parent->next->currentIp, "0");
 	parent->next->next = NULL;
 	parent->next->totalports = 0;
 
@@ -105,7 +106,7 @@ char *resolve(char *host)
 	struct hostent *he;
 	struct in_addr **addr_list;
 
-	he = gethostbyname(host);
+	he = gethostbyname(host); //this is obsolete
 
 	// an error occured, add logging at some time in the future
 	if (he == NULL)

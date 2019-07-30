@@ -168,7 +168,7 @@ void run_dns_updates(host *head)
 
 		if (ip == NULL)
 		{
-			printf("%s does not resolve, or resolves more than once, skipping.", cycle->hostname);
+			printf("%s does not resolve, is ipv6, or resolves more than once, skipping.\n", cycle->hostname);
 			cycle = cycle->next;
 			continue;
 		}
@@ -194,7 +194,18 @@ void run_dns_updates(host *head)
 			// check if wildcard entry
 			if (cycle->is_wildcard)
 			{
-				
+				// if we are supposed to do a removal first, do it.
+				if (remove)
+					iptables_del(cycle->currentIp, 0);
+
+				// send it to iptables and then copy ip to our object
+				iptables_add(ip, 0);
+				strncpy(cycle->currentIp, ip, sizeof(cycle->currentIp) -1);
+				printf("%s [%s] ip updated!\n", cycle->hostname, cycle->currentIp);
+
+				// we MUST continue from here on our loop
+				// as having ports as wildcard is undefined.
+				continue;
 			}
 			// cycle through all our ports,
 
