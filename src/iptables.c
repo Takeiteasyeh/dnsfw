@@ -1,6 +1,7 @@
  #include <stdio.h>
  #include <stdlib.h>
  #include "iptables.h"
+ #include "debug.h"
 
  void iptables_add(char *ip, int port)
  {
@@ -13,7 +14,8 @@
 	 if (port == 0)
 	 {
 		 sprintf(cmd, IPTF_ADD_FULL, ip);
-		 puts(p);
+		 //puts(p);
+		// to_log(DEBUG_INFO, cmd);
 		 system(p);
 
 	 }
@@ -21,10 +23,13 @@
 	 else
 	 {
 	 	sprintf(cmd, IPTF_ADD_ONE, ip, "tcp", port);
-		puts(p);
+	//	to_log(DEBUG_INFO, cmd);
+		//puts(p);
 		system(p);
+
 		sprintf(cmd, IPTF_ADD_ONE, ip, "udp", port);
-		puts(p);
+		//puts(p);
+	//	to_log(DEBUG_INFO, cmd);
 		system(p);
 	 }
 
@@ -41,7 +46,8 @@
 	 {
 		 // full applies to both protocols and is omitted.
 		 sprintf(cmd, IPTF_DEL_FULL, ip); 
-		 puts(p);
+		// puts(p);
+	//	to_log(DEBUG_INFO, cmd);
 		 system(p);
 
 	 }
@@ -49,10 +55,10 @@
 	 else
 	 {
 	 	sprintf(cmd, IPTF_DEL_ONE, ip, "tcp", port);
-		puts(p);
+		//to_log(DEBUG_INFO, cmd);
 		system(p);
 		sprintf(cmd, IPTF_DEL_ONE, ip, "udp", port);
-		puts(p);
+		//to_log(DEBUG_INFO, cmd);
 		system(p);
 	 }
 

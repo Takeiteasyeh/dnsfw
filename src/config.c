@@ -120,9 +120,10 @@ int LoadConfig(host *headhost)
 
 				// valid port if we havn't died
 				// the following if/else is a display rewrite only for adding port ALL
-				if ((!strncmp(token, "", 1)) && (atoi(token) == 0))
+			//	if ((!strncmp(token, "", 1)) && (atoi(token) == 0))
+				if (atoi(token) == 0)
 				{
-					printf("Adding: %s:0 ... ", curr->hostname);
+					printf("Adding: %s:*all ... ", curr->hostname);
 					curr->is_wildcard = TRUE;
 
 					if (curr->totalports > 0)
