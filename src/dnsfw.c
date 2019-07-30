@@ -45,7 +45,14 @@ int main(int argc, char *argv[])
 	LoadConfig(headhost);
 
 	printf("Resolving hosts...\n");
-	run_dns_updates(headhost);
+
+	while (1)
+	{
+		run_dns_updates(headhost);
+
+		sleep(30);
+	}
+
 
 
 
@@ -201,17 +208,35 @@ void run_dns_updates(host *head)
 				// send it to iptables and then copy ip to our object
 				iptables_add(ip, 0);
 				strncpy(cycle->currentIp, ip, sizeof(cycle->currentIp) -1);
-				printf("%s [%s] ip updated!\n", cycle->hostname, cycle->currentIp);
+				printf("%s [%s] wildip updated!\n", cycle->hostname, cycle->currentIp);
 
 				// we MUST continue from here on our loop
 				// as having ports as wildcard is undefined.
 				continue;
 			}
+
 			// cycle through all our ports,
+			for (int i = 0; i < MAX_PORTS; i++)
+			{
+				// if we hit a null we stop
+				if (cycle->ports[i] == '\0')
+					break;
+
+				if (remove)
+				{
+					iptables_del(cycle->currentIp, cycle->ports[i]);
+				}
+
+				iptables_add(ip, cycle->ports[i]);
+				// lu?
+				printf("%s added %d\n", cycle->hostname, cycle->ports[i]);
+			}
+
+			strncpy(cycle->currentIp, ip, sizeof(cycle->currentIp) -1);
 
 			
 
-			printf("update, %s\n", cycle->hostname);
+			printf("%s: cycle complete\n", cycle->hostname);
 		}
 
 		// lets make sure that we do the firewall updates if the ip's do not match
