@@ -46,7 +46,7 @@ int addport(host *selected, int port)
  * shit out in this block since creating objects and creating pointers in different locations of the
  * detached script is breaking things, including me. -rlynk
  */
-host *addhost(host *head, char *name)
+host *addhost(char *name)
 {
 	// just incase you play with my memory, ill double check here too.
 	if (strlen(name) > DNS_SIZE)
@@ -55,13 +55,14 @@ host *addhost(host *head, char *name)
 		exit(1);
 	}
 
-	host *parent = head;
 	//host *current;
 
 	// are we initialized yet?
-	if (head == NULL)
-		head = malloc(sizeof(host));
+	if (pheadhost == NULL)
+		pheadhost = malloc(sizeof(host));
 
+	host *parent = pheadhost;
+	
 	// if this is the first entry we dont do next things
 	if (strlen(parent->hostname) == 0)
 	{

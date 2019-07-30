@@ -8,18 +8,21 @@
 #include "debug.h"
 
 
-int LoadConfig(host *headhost)
+int load_config(void)
 {
 	char *line = NULL;
+//	host *pheadhost; // we cant pass our actual global
 	int linecount = 0;
 	int version = 0;
 	unsigned short int waitHost = TRUE;
 	size_t len = 0;
 	__ssize_t read;
 	FILE *file = fopen(CONF_FILE, "r");
+
+//	pheadhost = &headhost;
 //	headhost = malloc(sizeof(host));
 
-	if (headhost == NULL)
+	if (pheadhost == NULL)
 	{
 		// error
 	}
@@ -78,14 +81,14 @@ int LoadConfig(host *headhost)
 			if (waitHost)
 			{
 				// dtui
-				if (strlen(token) > (sizeof(headhost->hostname) -1))
+				if (strlen(token) > (sizeof(pheadhost->hostname) -1))
 				{
 					//printf("%s:%d > Host %s contains non-numeric port '%s'\n", CONF_FILE, linecount, curr->hostname, token);
 					printf("%s:%d > Size of hostname exceeds allowed characters: %lu of max %d\n", CONF_FILE, linecount, strlen(token), DNS_SIZE);
 					exit(1);
 				}
 
-				curr = addhost(headhost, token);
+				curr = addhost(token);
 		//		printf("host add: %s\n", curr->hostname);
 				waitHost = 0; // mark that we are waiting for a port now
 			

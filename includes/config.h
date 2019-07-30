@@ -26,4 +26,4 @@
 #define TYPE_IPTABLES 	0x001
 #define TYPE_IPCOP 		0x002
 
-int LoadConfig(host *head);
+int load_config(void);

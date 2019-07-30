@@ -13,16 +13,32 @@
 #include <string.h>
 #include <stdlib.h> // malloc, calloc, realloc, free
 #include <unistd.h>
+#include <signal.h>
 #include "iptables.h"
 #include "config.h"
 #include "dnsfw.h"
 #include "debug.h"
 #include "version.h"
 
+host headhost;
+host *pheadhost;
+	
+
 int main(int argc, char *argv[])
 {
-	host *headhost = NULL; 
-	headhost = malloc(sizeof(host));
+	//headhost = malloc(sizeof(host));
+	// do signal catches
+	if (signal(SIGINT, sig_handle) == SIG_ERR)
+		to_log(DEBUG_WARNING, "Unable to catch SIGINT");
+
+	if (signal(SIGHUP, sig_handle) == SIG_ERR)
+		to_log(DEBUG_WARNING, "Unable to catch SIGHUP handle");
+
+	if (signal(SIGTERM, sig_handle) == SIG_ERR)
+		to_log(DEBUG_WARNING, "Unable to catch SIGTERM handle");
+
+//	host *headhost = NULL; 
+//	headhost = malloc(sizeof(host));
 //	to_log(DEBUG_DEBUG, "starting up...");
 
 	printf("dnsfw v%s starting...\n", getversion());
@@ -42,13 +58,13 @@ int main(int argc, char *argv[])
 			exit(1);
 	}
 	printf("logging to %s\nparsing %s...\n", CONF_LOG, CONF_FILE);
-	LoadConfig(headhost);
+	load_config();
 
 	printf("Resolving hosts...\n");
 
 	while (1)
 	{
-		run_dns_updates(headhost);
+		run_dns_updates();
 
 		sleep(30);
 	}
@@ -163,10 +179,10 @@ void background_agent(void)
 
 }
 
-void run_dns_updates(host *head)
+void run_dns_updates(void)
 {
 	host *cycle = NULL;
-	cycle = head;
+	cycle = pheadhost;
 
 	while (cycle != NULL)
 	{
@@ -245,4 +261,42 @@ void run_dns_updates(host *head)
 		//iptables_add(ip, 22);
 		cycle = cycle->next;
 	}
+}
+
+void sig_handle(int sig)
+{
+	switch (sig)
+	{
+		case SIGINT:
+		case SIGTERM:
+		case SIGKILL:
+			printf("\nperforming gracefull shutdown...\n");
+			shutdown_gracefully();
+			break; //unreachable code
+
+		case SIGHUP:
+			restart();
+			break; //unreachable
+
+		default:
+			break; // unsupported signal
+
+	}
+
+}
+
+void restart()
+{
+	// shutdown code, without exit, and then execv to a new instance?
+	to_log(DEBUG_INFO, "Performing restart...");
+}
+
+void shutdown_gracefully(void)
+{
+	exit(0);
+}
+
+void clear_iptable_entries(void)
+{
+
 }
