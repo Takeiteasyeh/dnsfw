@@ -22,10 +22,14 @@
 
 host headhost;
 host *pheadhost;
+char *myexename;
 	
 
 int main(int argc, char *argv[])
 {
+	myexename = malloc(sizeof(argv[0]));
+	myexename = argv[0];
+
 	//headhost = malloc(sizeof(host));
 	// do signal catches
 	if (signal(SIGINT, sig_handle) == SIG_ERR)
@@ -66,7 +70,7 @@ int main(int argc, char *argv[])
 	{
 		run_dns_updates();
 
-		sleep(30);
+		sleep(WAIT_TIME);
 	}
 
 
@@ -191,9 +195,46 @@ void run_dns_updates(void)
 
 		if (ip == NULL)
 		{
-			printf("%s does not resolve, is ipv6, or resolves more than once, skipping.\n", cycle->hostname);
-			cycle = cycle->next;
-			continue;
+			// if we already have an ip we will remove it for security
+			if (strcmp(cycle->currentIp, "0") == 0)
+			{
+
+				printf("%s does not resolve, is ipv6, or resolves more than once, skipping.\n", cycle->hostname);
+				cycle = cycle->next;
+				continue;
+			}
+
+			//this is a removal without a new entry.
+			else
+			{
+				//wildcard check first
+				if (cycle->is_wildcard)
+				{
+					iptables_del(cycle->currentIp, 0);
+					printf("%s removed ~all\n", cycle->hostname);
+					strcpy(cycle->currentIp, "0");
+					cycle = cycle->next;
+					continue;
+				}
+							// cycle through all our ports,
+				for (int i = 0; i < MAX_PORTS; i++)
+				{
+					// if we hit a null we stop
+					if (cycle->ports[i] == '\0')
+						break;
+
+					iptables_del(cycle->currentIp, cycle->ports[i]);
+					
+					// lu?
+					printf("%s removed %d\n", cycle->hostname, cycle->ports[i]);
+				}
+
+				strcpy(cycle->currentIp, "0");
+				cycle = cycle->next;
+				continue;
+			}
+
+
 		}
 
 		// if new ip is same as current we also continue.
@@ -207,6 +248,7 @@ void run_dns_updates(void)
 		// we need to update this entry
 		else
 		{
+			printf("%s is %s [old is %s]\n", cycle->hostname, ip, cycle->currentIp);
 			// if ip is not 0 we do need to remove old entries
 			if (strcmp(cycle->currentIp, "0") != 0)
 			{
@@ -228,6 +270,7 @@ void run_dns_updates(void)
 
 				// we MUST continue from here on our loop
 				// as having ports as wildcard is undefined.
+				cycle = cycle->next;
 				continue;
 			}
 
@@ -257,7 +300,7 @@ void run_dns_updates(void)
 
 		// lets make sure that we do the firewall updates if the ip's do not match
 
-		printf("%s is %s [old is %s]\n", cycle->hostname, ip, cycle->currentIp);
+		
 		//iptables_add(ip, 22);
 		cycle = cycle->next;
 	}
@@ -287,16 +330,58 @@ void sig_handle(int sig)
 
 void restart()
 {
+	char *args[]={ NULL};
 	// shutdown code, without exit, and then execv to a new instance?
-	to_log(DEBUG_INFO, "Performing restart...");
+	to_log(DEBUG_INFO, "Performing restart...\n");
+	clear_iptable_entries();
+	sleep(1);
+
+	execv(myexename, args);
+	exit(0);
 }
 
 void shutdown_gracefully(void)
 {
+	clear_iptable_entries();
 	exit(0);
 }
 
 void clear_iptable_entries(void)
 {
+	host *cycle;
 
+	cycle = pheadhost;
+
+	while (cycle != NULL)
+	{
+		// no ip
+		if (strcmp(cycle->currentIp, "0") == 0)
+		{
+			cycle = cycle->next;
+			continue;
+		}
+
+		else if (cycle->is_wildcard)
+		{
+			iptables_del(cycle->currentIp, 0);
+			printf("%s:~all cleaned\n", cycle->hostname);
+		}
+
+		else
+		{
+			for (int i = 0; i < MAX_PORTS; i++)
+			{
+				if (cycle->ports[i] == '\0')
+					break;
+
+				else
+				{
+					iptables_del(cycle->currentIp, cycle->ports[i]);
+					printf("%s:%d cleaned\n", cycle->hostname, cycle->ports[i]);
+				}
+			}
+		}
+
+		cycle = cycle->next;
+	}
 }

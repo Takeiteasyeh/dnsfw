@@ -20,6 +20,7 @@
 #define CONF_LOG "bdnsfw.log"
 #define CONF_VERSION 1 // increment this by 1 every format change, make sure to update the database (somehow)
 #define MAX_LINE_SIZE 1024 // (1kb)
+#define WAIT_TIME 60 // time to wait between resolves, in seconds
 
 #define MAX_DNS_ENTRIES 50 // max entries to store
 
