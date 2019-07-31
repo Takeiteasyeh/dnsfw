@@ -64,8 +64,15 @@ int main(int argc, char *argv[])
 	printf("logging to %s\nparsing %s...\n", CONF_LOG, CONF_FILE);
 	load_config();
 
-	printf("Resolving hosts...\n");
+	printf("Doing first run...\n");
+	run_dns_updates();
+	printf("Falling to background...\n");
+	
+	if (fork() > 0) // parent exit!
+		exit(0);
 
+	sleep(30);
+	
 	while (1)
 	{
 		run_dns_updates();
