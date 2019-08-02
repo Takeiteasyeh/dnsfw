@@ -12,6 +12,7 @@ void debug(int level, char *file, char *sub, int line, char *message)
 
 void to_log(int level, char *message)
 {
+	return;
 	if ((level & DEBUG_LEVEL) == 0)
 	{
 		return;
@@ -43,11 +44,13 @@ void to_log(int level, char *message)
 	printf("%s", msgnl);
 
 }
-
+/*
 void sprintf_log(int level, char *format, ...)
 {
 	va_list parg;
-	char *buffer[1024];
+	char *buffer;
+
+	buffer = (char *) malloc(1024);
 
 	if ((level & DEBUG_LEVEL) == 0)
 	{
@@ -58,20 +61,21 @@ void sprintf_log(int level, char *format, ...)
 	int count;
 
 	va_start(parg, format);
-	int buffsize;
+	size_t buffsize = 1024;
 	// add newline
 	//char *msgnl;
 	//msgnl = malloc(strlen(p_sprintf) + 2);
-	buffsize = vsnprintf(buffer, sizeof(buffer), format, parg);
+	buffsize = vsnprintf(buffer, buffsize, format, parg);
 
 	while (buffsize == sizeof(buffer))
 	{
-		realloc(buffer, (sizeof(buffer) + 1024));
-		buffsize = vsnprintf(buffer, sizeof(buffer), format, parg);
+		buffer = (char *) realloc(buffer, (sizeof(buffer) + 1024));
+		size_t sized = sizeof(buffer);
+		buffsize = vsnprintf(buffer, sized, format, parg);
 
 		// ensure room for our line feed
 		if ((sizeof(buffer) - buffsize) < 1)
-			realloc(buffer, sizeof(buffer) + 1);
+			buffer = (char *) realloc(buffer, sizeof(buffer) + 1);
 	}
 
 	//strcpy(msgnl, p_sprintf);
@@ -86,11 +90,51 @@ void sprintf_log(int level, char *format, ...)
 
 	else
 	{
-		count = fwrite(buffer, 1, strlen(buffer), fptr);
+		count = fwrite(buffer, 1, strlen(buffer) +1, fptr);
 	//	printf("written %d of %lu\n", (int)count, strlen(msgnl) - 1);
 		fclose(fptr);
 	}
 
+	va_end(parg);
+	//printf("%s", msgnl);
+}
+*/
+
+void sprintf_log(int level, char *format, ...)
+{
+	va_list parg;
+	char buffer[1024];
+
+	if ((level & DEBUG_LEVEL) == 0)
+	{
+		return;
+	}
+
+	FILE *fptr;
+	int count;
+
+	va_start(parg, format);
+	size_t buffsize = 1024;
+	buffsize = vsnprintf(buffer, buffsize, format, parg);
+
+	//strcpy(msgnl, p_sprintf);
+	strcat(buffer, "\n");
+	
+	fptr = fopen(CONF_LOG, "a");
+
+	if (fptr == NULL)
+	{
+		printf("Unable to write to log file: %s\n", CONF_LOG);
+	}
+
+	else
+	{
+		count = fwrite(buffer, 1, strlen(buffer) +1, fptr);
+	//	printf("written %d of %lu\n", (int)count, strlen(msgnl) - 1);
+		fclose(fptr);
+	}
+
+	va_end(parg);
 	//printf("%s", msgnl);
 }
 

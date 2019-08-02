@@ -69,9 +69,10 @@ int main(int argc, char *argv[])
 	run_dns_updates();
 	printf("Falling to background...\n");
 	
+	/*
 	if (fork() > 0) // parent exit!
 		exit(0);
-
+	*/
 	sleep(30);
 	
 	while (1)
