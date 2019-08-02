@@ -51,7 +51,7 @@ host *addhost(char *name)
 	// just incase you play with my memory, ill double check here too.
 	if (strlen(name) > DNS_SIZE)
 	{
-		sprintf_log(DEBUG_ERROR, sprintf("error: dns name exceeds rfc standard of 253 characters (now: %lu)\n", strlen(name)));
+		sprintf_log(DEBUG_ERROR, "error: dns name exceeds rfc standard of 253 characters (now: %lu)", strlen(name));
 		exit(1);
 	}
 
@@ -86,7 +86,7 @@ host *addhost(char *name)
 	if (parent->next == NULL)
 	{
 		//memory error
-		sprintf_log(DEBUG_ERROR, sprintf("Not enough memory %s\n", "oops"));
+		sprintf_log(DEBUG_ERROR, "Not enough memory %s", "oops");
 		exit(1);
 	}
 

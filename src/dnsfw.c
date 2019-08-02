@@ -206,7 +206,7 @@ void run_dns_updates(void)
 			// if we already have an ip we will remove it for security
 			if (strcmp(cycle->currentIp, "0") == 0)
 			{
-				sprintf_log(DEBUG_INFO, sprintf("%s does not resolve, is ipv6, or resolves more than once, skipping.", cycle->hostname));
+				sprintf_log(DEBUG_INFO, "%s does not resolve, is ipv6, or resolves more than once, skipping.", cycle->hostname);
 			//	printf("%s does not resolve, is ipv6, or resolves more than once, skipping.\n", cycle->hostname);
 				cycle = cycle->next;
 				continue;
@@ -220,7 +220,7 @@ void run_dns_updates(void)
 				{
 					iptables_del(cycle->currentIp, 0);
 					
-					sprintf_log(DEBUG_INFO, sprintf("%s removed ~all", cycle->hostname));
+					sprintf_log(DEBUG_INFO, "%s removed ~all", cycle->hostname);
 					strcpy(cycle->currentIp, "0");
 					cycle = cycle->next;
 					continue;
@@ -235,7 +235,7 @@ void run_dns_updates(void)
 					iptables_del(cycle->currentIp, cycle->ports[i]);
 					
 					// lu?
-					sprintf_log(DEBUG_INFO, sprintf("%s removed %d", cycle->hostname, cycle->ports[i]));
+					sprintf_log(DEBUG_INFO, "%s removed %d", cycle->hostname, cycle->ports[i]);
 				}
 
 				strcpy(cycle->currentIp, "0");
@@ -257,7 +257,7 @@ void run_dns_updates(void)
 		// we need to update this entry
 		else
 		{
-			sprintf_log(DEBUG_INFO, sprintf("%s is %s [old is %s]", cycle->hostname, ip, cycle->currentIp));
+			sprintf_log(DEBUG_INFO, "%s is %s [old is %s]", cycle->hostname, ip, cycle->currentIp);
 			// if ip is not 0 we do need to remove old entries
 			if (strcmp(cycle->currentIp, "0") != 0)
 			{
@@ -275,7 +275,7 @@ void run_dns_updates(void)
 				// send it to iptables and then copy ip to our object
 				iptables_add(ip, 0);
 				strncpy(cycle->currentIp, ip, sizeof(cycle->currentIp) -1);
-				sprintf_log(DEBUG_INFO, sprintf("%s [%s] wildip updated!", cycle->hostname, cycle->currentIp));
+				sprintf_log(DEBUG_INFO, "%s [%s] wildip updated!", cycle->hostname, cycle->currentIp);
 
 				// we MUST continue from here on our loop
 				// as having ports as wildcard is undefined.
@@ -297,7 +297,7 @@ void run_dns_updates(void)
 
 				iptables_add(ip, cycle->ports[i]);
 				// lu?
-				sprintf_log(DEBUG_INFO, sprintf("%s added %d\n", cycle->hostname, cycle->ports[i]));
+				sprintf_log(DEBUG_INFO, "%s added %d", cycle->hostname, cycle->ports[i]);
 			}
 
 			strncpy(cycle->currentIp, ip, sizeof(cycle->currentIp) -1);
@@ -341,7 +341,7 @@ void restart()
 {
 	char *args[]={ NULL};
 	// shutdown code, without exit, and then execv to a new instance?
-	to_log(DEBUG_INFO, "Performing restart...\n");
+	to_log(DEBUG_INFO, "Performing restart...");
 	clear_iptable_entries();
 	sleep(1);
 
@@ -373,7 +373,7 @@ void clear_iptable_entries(void)
 		else if (cycle->is_wildcard)
 		{
 			iptables_del(cycle->currentIp, 0);
-			sprintf_log(DEBUG_INFO, sprintf("%s:~all cleaned\n", cycle->hostname));
+			sprintf_log(DEBUG_INFO, "%s:~all cleaned", cycle->hostname);
 		}
 
 		else
@@ -386,7 +386,7 @@ void clear_iptable_entries(void)
 				else
 				{
 					iptables_del(cycle->currentIp, cycle->ports[i]);
-					sprintf_log(DEBUG_INFO, sprintf("%s:%d cleaned\n", cycle->hostname, cycle->ports[i]));
+					sprintf_log(DEBUG_INFO, "%s:%d cleaned", cycle->hostname, cycle->ports[i]);
 				}
 			}
 		}

@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "../includes/debug.h"
-#include "../includes/config.h"
+#include <stdarg.h>
+#include "debug.h"
+#include "config.h"
 
 void debug(int level, char *file, char *sub, int line, char *message)
 {
@@ -43,8 +44,11 @@ void to_log(int level, char *message)
 
 }
 
-void sprintf_log(int level, int *p_sprintf)
+void sprintf_log(int level, char *format, ...)
 {
+	va_list parg;
+	char *buffer[1024];
+
 	if ((level & DEBUG_LEVEL) == 0)
 	{
 		return;
@@ -53,11 +57,25 @@ void sprintf_log(int level, int *p_sprintf)
 	FILE *fptr;
 	int count;
 
+	va_start(parg, format);
+	int buffsize;
 	// add newline
-	char *msgnl;
-	msgnl = malloc(strlen(p_sprintf) + 2);
-	strcpy(msgnl, p_sprintf);
-	strcat(msgnl, "\n");
+	//char *msgnl;
+	//msgnl = malloc(strlen(p_sprintf) + 2);
+	buffsize = vsnprintf(buffer, sizeof(buffer), format, parg);
+
+	while (buffsize == sizeof(buffer))
+	{
+		realloc(buffer, (sizeof(buffer) + 1024));
+		buffsize = vsnprintf(buffer, sizeof(buffer), format, parg);
+
+		// ensure room for our line feed
+		if ((sizeof(buffer) - buffsize) < 1)
+			realloc(buffer, sizeof(buffer) + 1);
+	}
+
+	//strcpy(msgnl, p_sprintf);
+	strcat(buffer, "\n");
 	
 	fptr = fopen(CONF_LOG, "a");
 
@@ -68,7 +86,7 @@ void sprintf_log(int level, int *p_sprintf)
 
 	else
 	{
-		count = fwrite(msgnl, 1, strlen(msgnl), fptr);
+		count = fwrite(buffer, 1, strlen(buffer), fptr);
 	//	printf("written %d of %lu\n", (int)count, strlen(msgnl) - 1);
 		fclose(fptr);
 	}

@@ -13,5 +13,5 @@
 
     void debug(int level, char *file, char *sub, int line, char *message);
     void to_log(int level, char *message);
-    void sprintf_log(int level, int *p_sprintf);
+    void sprintf_log(int level, char *format, ...);
     char *levelname(int level);
