@@ -51,7 +51,7 @@ host *addhost(char *name)
 	// just incase you play with my memory, ill double check here too.
 	if (strlen(name) > DNS_SIZE)
 	{
-		printf("error: dns name exceeds rfc standard of 253 characters (now: %lu)\n", strlen(name));
+		sprintf_log(DEBUG_ERROR, sprintf("error: dns name exceeds rfc standard of 253 characters (now: %lu)\n", strlen(name)));
 		exit(1);
 	}
 
@@ -67,7 +67,6 @@ host *addhost(char *name)
 	if (strlen(parent->hostname) == 0)
 	{
 		strncpy(parent->hostname, name, sizeof(parent->hostname) - 1);
-	//	strncpy(parent->lastIp, "0", 1);
 		strcpy(parent->currentIp, "0");
 		parent->prev = NULL;
 		parent->next = NULL;
@@ -87,11 +86,9 @@ host *addhost(char *name)
 	if (parent->next == NULL)
 	{
 		//memory error
-		printf("Not enough memory %s\n", "oops");
+		sprintf_log(DEBUG_ERROR, sprintf("Not enough memory %s\n", "oops"));
 		exit(1);
 	}
-
-//	current = parent->next;
 
 	strcpy(parent->next->hostname, name);
 	strcpy(parent->next->currentIp, "0");
@@ -119,10 +116,7 @@ char *resolve(char *host)
 	 * a security risk, and somewhat contrary to dynamic dns */
 	if (addr_list[1] != NULL)
 	{
-//		char *msg;
-//	printf("%s resolves to multiple addresses and will be ignored for security.", host));
-		to_log(DEBUG_WARNING, "multiple ips for host");
-
+		//to_log(DEBUG_WARNING, "multiple ips for host");
 		return NULL;
 	}
 

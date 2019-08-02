@@ -15,7 +15,7 @@
 	 {
 		 sprintf(cmd, IPTF_ADD_FULL, ip);
 		 //puts(p);
-		// to_log(DEBUG_INFO, cmd);
+		 to_log(DEBUG_TRACE, cmd);
 		 system(p);
 
 	 }
@@ -23,13 +23,13 @@
 	 else
 	 {
 	 	sprintf(cmd, IPTF_ADD_ONE, ip, "tcp", port);
-	//	to_log(DEBUG_INFO, cmd);
+		to_log(DEBUG_TRACE, cmd);
 		//puts(p);
 		system(p);
 
 		sprintf(cmd, IPTF_ADD_ONE, ip, "udp", port);
 		//puts(p);
-	//	to_log(DEBUG_INFO, cmd);
+		to_log(DEBUG_TRACE, cmd);
 		system(p);
 	 }
 
@@ -47,7 +47,7 @@
 		 // full applies to both protocols and is omitted.
 		 sprintf(cmd, IPTF_DEL_FULL, ip); 
 		// puts(p);
-	//	to_log(DEBUG_INFO, cmd);
+		to_log(DEBUG_TRACE, cmd);
 		 system(p);
 
 	 }
@@ -55,10 +55,10 @@
 	 else
 	 {
 	 	sprintf(cmd, IPTF_DEL_ONE, ip, "tcp", port);
-		//to_log(DEBUG_INFO, cmd);
+		to_log(DEBUG_TRACE, cmd);
 		system(p);
 		sprintf(cmd, IPTF_DEL_ONE, ip, "udp", port);
-		//to_log(DEBUG_INFO, cmd);
+		to_log(DEBUG_TRACE, cmd);
 		system(p);
 	 }
 

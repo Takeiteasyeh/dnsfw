@@ -43,6 +43,39 @@ void to_log(int level, char *message)
 
 }
 
+void sprintf_log(int level, int *p_sprintf)
+{
+	if ((level & DEBUG_LEVEL) == 0)
+	{
+		return;
+	}
+
+	FILE *fptr;
+	int count;
+
+	// add newline
+	char *msgnl;
+	msgnl = malloc(strlen(p_sprintf) + 2);
+	strcpy(msgnl, p_sprintf);
+	strcat(msgnl, "\n");
+	
+	fptr = fopen(CONF_LOG, "a");
+
+	if (fptr == NULL)
+	{
+		printf("Unable to write to log file: %s\n", CONF_LOG);
+	}
+
+	else
+	{
+		count = fwrite(msgnl, 1, strlen(msgnl), fptr);
+	//	printf("written %d of %lu\n", (int)count, strlen(msgnl) - 1);
+		fclose(fptr);
+	}
+
+	//printf("%s", msgnl);
+}
+
 char *levelname(int level)
 {
 	char *type = NULL;

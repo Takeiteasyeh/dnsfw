@@ -2,7 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
-#include "../includes/version.h"
+#include "version.h"
+#include "debug.h"
 
 const char *getversion() //pointer return
 {
@@ -12,7 +13,7 @@ const char *getversion() //pointer return
 
 	if (result == NULL)
 	{
-		printf("Error: Unable to allocate memory for version display");
+		to_log(DEBUG_ERROR, "Error: Unable to allocate memory for version display");
 		exit(1);
 	}
 

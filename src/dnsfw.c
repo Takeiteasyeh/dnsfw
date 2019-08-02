@@ -46,6 +46,7 @@ int main(int argc, char *argv[])
 //	to_log(DEBUG_DEBUG, "starting up...");
 
 	printf("dnsfw v%s starting...\n", getversion());
+	printf("built: %s\n", __DATE__);
 
 	// we need to run as root
 	if (getuid() > 0)
@@ -205,8 +206,8 @@ void run_dns_updates(void)
 			// if we already have an ip we will remove it for security
 			if (strcmp(cycle->currentIp, "0") == 0)
 			{
-
-				printf("%s does not resolve, is ipv6, or resolves more than once, skipping.\n", cycle->hostname);
+				sprintf_log(DEBUG_INFO, sprintf("%s does not resolve, is ipv6, or resolves more than once, skipping.", cycle->hostname));
+			//	printf("%s does not resolve, is ipv6, or resolves more than once, skipping.\n", cycle->hostname);
 				cycle = cycle->next;
 				continue;
 			}
@@ -218,7 +219,8 @@ void run_dns_updates(void)
 				if (cycle->is_wildcard)
 				{
 					iptables_del(cycle->currentIp, 0);
-					printf("%s removed ~all\n", cycle->hostname);
+					
+					sprintf_log(DEBUG_INFO, sprintf("%s removed ~all", cycle->hostname));
 					strcpy(cycle->currentIp, "0");
 					cycle = cycle->next;
 					continue;
@@ -233,7 +235,7 @@ void run_dns_updates(void)
 					iptables_del(cycle->currentIp, cycle->ports[i]);
 					
 					// lu?
-					printf("%s removed %d\n", cycle->hostname, cycle->ports[i]);
+					sprintf_log(DEBUG_INFO, sprintf("%s removed %d", cycle->hostname, cycle->ports[i]));
 				}
 
 				strcpy(cycle->currentIp, "0");
@@ -247,7 +249,7 @@ void run_dns_updates(void)
 		// if new ip is same as current we also continue.
 		else if (strcmp(ip, cycle->currentIp) == 0)
 		{
-			printf("same ip, skip! %s\n", cycle->hostname);
+			//printf("same ip, skip! %s\n", cycle->hostname);
 			cycle = cycle->next;
 			continue;
 		}
@@ -255,11 +257,11 @@ void run_dns_updates(void)
 		// we need to update this entry
 		else
 		{
-			printf("%s is %s [old is %s]\n", cycle->hostname, ip, cycle->currentIp);
+			sprintf_log(DEBUG_INFO, sprintf("%s is %s [old is %s]", cycle->hostname, ip, cycle->currentIp));
 			// if ip is not 0 we do need to remove old entries
 			if (strcmp(cycle->currentIp, "0") != 0)
 			{
-				printf("%s: remove flag set ip %s\n", cycle->hostname, cycle->currentIp);
+				//printf("%s: remove flag set ip %s\n", cycle->hostname, cycle->currentIp);
 				remove = TRUE; // just set the flag so we can do it when we cycle ports
 			}
 
@@ -273,7 +275,7 @@ void run_dns_updates(void)
 				// send it to iptables and then copy ip to our object
 				iptables_add(ip, 0);
 				strncpy(cycle->currentIp, ip, sizeof(cycle->currentIp) -1);
-				printf("%s [%s] wildip updated!\n", cycle->hostname, cycle->currentIp);
+				sprintf_log(DEBUG_INFO, sprintf("%s [%s] wildip updated!", cycle->hostname, cycle->currentIp));
 
 				// we MUST continue from here on our loop
 				// as having ports as wildcard is undefined.
@@ -295,14 +297,14 @@ void run_dns_updates(void)
 
 				iptables_add(ip, cycle->ports[i]);
 				// lu?
-				printf("%s added %d\n", cycle->hostname, cycle->ports[i]);
+				sprintf_log(DEBUG_INFO, sprintf("%s added %d\n", cycle->hostname, cycle->ports[i]));
 			}
 
 			strncpy(cycle->currentIp, ip, sizeof(cycle->currentIp) -1);
 
 			
 
-			printf("%s: cycle complete\n", cycle->hostname);
+			//printf("%s: cycle complete\n", cycle->hostname);
 		}
 
 		// lets make sure that we do the firewall updates if the ip's do not match
@@ -320,7 +322,7 @@ void sig_handle(int sig)
 		case SIGINT:
 		case SIGTERM:
 		case SIGKILL:
-			printf("\nperforming gracefull shutdown...\n");
+			to_log(DEBUG_INFO, "performing gracefull shutdown from SIGHANDLE...");
 			shutdown_gracefully();
 			break; //unreachable code
 
@@ -371,7 +373,7 @@ void clear_iptable_entries(void)
 		else if (cycle->is_wildcard)
 		{
 			iptables_del(cycle->currentIp, 0);
-			printf("%s:~all cleaned\n", cycle->hostname);
+			sprintf_log(DEBUG_INFO, sprintf("%s:~all cleaned\n", cycle->hostname));
 		}
 
 		else
@@ -384,7 +386,7 @@ void clear_iptable_entries(void)
 				else
 				{
 					iptables_del(cycle->currentIp, cycle->ports[i]);
-					printf("%s:%d cleaned\n", cycle->hostname, cycle->ports[i]);
+					sprintf_log(DEBUG_INFO, sprintf("%s:%d cleaned\n", cycle->hostname, cycle->ports[i]));
 				}
 			}
 		}
