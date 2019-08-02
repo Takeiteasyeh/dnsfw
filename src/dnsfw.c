@@ -45,13 +45,13 @@ int main(int argc, char *argv[])
 //	headhost = malloc(sizeof(host));
 //	to_log(DEBUG_DEBUG, "starting up...");
 
-	printf("dnsfw v%s starting...\n", getversion());
-	printf("built: %s\n", __DATE__);
+	sprintf_log(DEBUG_INFO, "dnsfw v%s starting...", getversion());
+	sprintf_log(DEBUG_INFO, "built: %s", __DATE__);
 
 	// we need to run as root
 	if (getuid() > 0)
 	{
-		printf("error: please run as root.\n");
+		sprintf_log(DEBUG_ERROR, "error: please run as root.");
 		//exit(1);
 	}
 
@@ -62,12 +62,13 @@ int main(int argc, char *argv[])
 		if (!process_cli_args(argc, argv))
 			exit(1);
 	}
-	printf("logging to %s\nparsing %s...\n", CONF_LOG, CONF_FILE);
+	//printf("logging to %s\nparsing %s...\n", CONF_LOG, CONF_FILE);
 	load_config();
 
-	printf("Doing first run...\n");
+	sprintf_log(DEBUG_INFO, "Doing first run...");
 	run_dns_updates();
-	printf("Falling to background...\n");
+
+	sprintf_log(DEBUG_INFO, "Falling to background...");
 	
 	/*
 	if (fork() > 0) // parent exit!
