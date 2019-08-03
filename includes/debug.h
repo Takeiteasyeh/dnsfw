@@ -9,9 +9,8 @@
     #define DEBUG_DEFAULTS	(DEBUG_FATAL | DEBUG_ERROR | DEBUG_INFO)
 
     // CURRENT DEBUG LEVEL
-    #define DEBUG_LEVEL		DEBUG_ALL
+    #define DEBUG_LEVEL		DEBUG_DEFAULTS
 
-    void debug(int level, char *file, char *sub, int line, char *message);
     void to_log(int level, char *message);
     void sprintf_log(int level, char *format, ...);
     char *levelname(int level);

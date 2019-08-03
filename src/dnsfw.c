@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 	if (getuid() > 0)
 	{
 		sprintf_log(DEBUG_ERROR, "error: please run as root.");
-		//exit(1);
+		exit(1);
 	}
 
 	// check command line arguments
@@ -70,10 +70,10 @@ int main(int argc, char *argv[])
 
 	sprintf_log(DEBUG_INFO, "Falling to background...");
 	
-	/*
+	
 	if (fork() > 0) // parent exit!
 		exit(0);
-	*/
+	
 	sleep(30);
 	
 	while (1)
@@ -82,11 +82,6 @@ int main(int argc, char *argv[])
 
 		sleep(WAIT_TIME);
 	}
-
-
-
-
-	//printf("dnsfw: v%s\n", FULL_VERSION);	
 }
 
 /**
@@ -95,9 +90,6 @@ int main(int argc, char *argv[])
 int process_cli_args(int argc, char *argv[])
 {
 	int retcode = 0; // by default, any cli arguments are considered fatal to the application
-	
-	//printf("arvg is %s\n", argv[1]);
-	//return 0;
 
 	if ((strncmp(argv[1], "-h", 3) == 0) || (strncmp(argv[1], "--help", 7) == 0))
 	{
@@ -127,9 +119,6 @@ int process_cli_args(int argc, char *argv[])
 	{
 		printf("test block\n");
 	} 
-
-
-
 
 	return retcode;
 }
@@ -286,7 +275,7 @@ void run_dns_updates(void)
 			}
 
 			// cycle through all our ports,
-			for (int i = 0; i < MAX_PORTS; i++)
+			for (int i = 0; i < cycle->totalports; i++)
 			{
 				// if we hit a null we stop
 				if (cycle->ports[i] == '\0')
@@ -343,17 +332,19 @@ void restart()
 {
 	char *args[]={ NULL};
 	// shutdown code, without exit, and then execv to a new instance?
-	to_log(DEBUG_INFO, "Performing restart...");
+	to_log(DEBUG_INFO, "restart: removing iptable entries...");
 	clear_iptable_entries();
 	sleep(1);
-
+	to_log(DEBUG_INFO, "restart: usurping process...");
 	execv(myexename, args);
-	exit(0);
+	exit(0); // no reach
 }
 
 void shutdown_gracefully(void)
 {
+	sprintf_log(DEBUG_INFO, "shutdown: removing iptable entries...");
 	clear_iptable_entries();
+	sprintf_log(DEBUG_INFO, "shutdown: terminating.");
 	exit(0);
 }
 
@@ -375,12 +366,12 @@ void clear_iptable_entries(void)
 		else if (cycle->is_wildcard)
 		{
 			iptables_del(cycle->currentIp, 0);
-			sprintf_log(DEBUG_INFO, "%s:~all cleaned", cycle->hostname);
+			sprintf_log(DEBUG_INFO, "%s:~all removed", cycle->hostname);
 		}
 
 		else
 		{
-			for (int i = 0; i < MAX_PORTS; i++)
+			for (int i = 0; i < cycle->totalports; i++)
 			{
 				if (cycle->ports[i] == '\0')
 					break;
@@ -388,7 +379,7 @@ void clear_iptable_entries(void)
 				else
 				{
 					iptables_del(cycle->currentIp, cycle->ports[i]);
-					sprintf_log(DEBUG_INFO, "%s:%d cleaned", cycle->hostname, cycle->ports[i]);
+					sprintf_log(DEBUG_INFO, "%s:%d removed", cycle->hostname, cycle->ports[i]);
 				}
 			}
 		}

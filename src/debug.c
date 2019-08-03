@@ -6,47 +6,11 @@
 #include "debug.h"
 #include "config.h"
 
-
-void debug(int level, char *file, char *sub, int line, char *message)
-{
-
-}
-
+// just a shortcut to sprintf_log
 void to_log(int level, char *message)
 {
 	sprintf_log(level, message);
 	return;
-
-	if ((level & DEBUG_LEVEL) == 0)
-	{
-		return;
-	}
-
-	FILE *fptr;
-	int count;
-
-	// add newline
-	char *msgnl;
-	msgnl = malloc(sizeof(message) + 2);
-	strcpy(msgnl, message);
-	strcat(msgnl, "\n");
-	
-	fptr = fopen(CONF_LOG, "a");
-
-	if (fptr == NULL)
-	{
-		printf("Unable to write to log file: %s\n", CONF_LOG);
-	}
-
-	else
-	{
-		count = fwrite(msgnl, 1, strlen(msgnl), fptr);
-		printf("written %d of %lu\n", (int)count, strlen(msgnl) - 1);
-		fclose(fptr);
-	}
-
-	printf("%s", msgnl);
-
 }
 
 void sprintf_log(int level, char *format, ...)
@@ -63,7 +27,6 @@ void sprintf_log(int level, char *format, ...)
 	}
 
 	FILE *fptr;
-	int count;
 
 	time_t ltime;
 	ltime = time(NULL);
@@ -76,10 +39,6 @@ void sprintf_log(int level, char *format, ...)
 	snprintf(timebuff2, strlen(timebuff), "%s", timebuff);
 
 	sprintf(buffer, "[%s] %s\n", timebuff2, prebuffer);
-	//strcat(buffer, prebuffer);
-	//strcat(buffer, "\n");
-	
-	//strcat(buffer, "\n");
 	
 	fptr = fopen(CONF_LOG, "a");
 
@@ -90,7 +49,7 @@ void sprintf_log(int level, char *format, ...)
 
 	else
 	{
-		count = fwrite(buffer, 1, strlen(buffer) +1, fptr);
+		fwrite(buffer, 1, strlen(buffer) +1, fptr);
 	//	printf("written %d of %lu\n", (int)count, strlen(msgnl) - 1);
 		fclose(fptr);
 	}

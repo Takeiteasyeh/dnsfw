@@ -38,6 +38,7 @@ int addport(host *selected, int port)
 	// lets continue at this point and add the port to index
 	selected->ports[total] = port;
 	selected->totalports++;
+	selected->ports[++total] = '\0';
 
 	return OK;
 }
@@ -57,7 +58,7 @@ host *addhost(char *name)
 
 	//host *current;
 
-	// are we initialized yet?
+	// are we initialized yet? // this code should be removed as i think its useless now
 	if (pheadhost == NULL)
 		pheadhost = malloc(sizeof(host));
 
@@ -70,6 +71,8 @@ host *addhost(char *name)
 		strcpy(parent->currentIp, "0");
 		parent->prev = NULL;
 		parent->next = NULL;
+		parent->totalports = 0;
+		parent->is_wildcard = FALSE;
 
 		return parent;
 
@@ -86,14 +89,15 @@ host *addhost(char *name)
 	if (parent->next == NULL)
 	{
 		//memory error
-		sprintf_log(DEBUG_ERROR, "Not enough memory %s", "oops");
+		sprintf_log(DEBUG_ERROR, "Not enough memory");
 		exit(1);
 	}
 
-	strcpy(parent->next->hostname, name);
+	strncpy(parent->next->hostname, name, sizeof(parent->hostname));
 	strcpy(parent->next->currentIp, "0");
 	parent->next->next = NULL;
 	parent->next->totalports = 0;
+	parent->next->is_wildcard = FALSE;
 
 	return parent->next;
 
