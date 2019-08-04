@@ -1,3 +1,15 @@
+/*                                                       )
+          ,%,                                     ) _(___[]_
+          %%%,&&&, dnsfw.bacon.place   ,%%,      (;`       /\
+          %Y/%&&&&  rlynk@bacon.place  %%%%   ___/_____)__/ _\__     ,%%,
+        ^^^||^&\Y&^^^^^^^^^^^^^^^^^^^^^%Y/%^^/ (_()   (  | /____/\^^^%%%%^^
+          `    || _,..=xxxxxxxxxxxx,    ||   |(' |LI (.)I| | LI ||   %\Y%
+         -=      /L_Y.-"""""""""`,-n-. `    @'---|__||___|_|____||_   ||
+        ___-=___.--'[========]|L]J: []\ __________@//@___________) )______
+       -= _ _ _ |/ _ ''_ " " ||[ -_ 4 |  _  _  _  _  _  _  _  _  _  _  _
+                '-(_)-(_)----'v'-(_)--'
+       jgs-----------------------------------------------------------------
+*/
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -6,7 +18,7 @@
 //#include "hosts.h"
 #include "dnsfw.h"
 #include "debug.h"
-
+extern host *pheadhost;
 
 int load_config(void)
 {
@@ -74,7 +86,6 @@ int load_config(void)
 				// dtui
 				if (strlen(token) > (sizeof(pheadhost->hostname) -1))
 				{
-					//printf("%s:%d > Host %s contains non-numeric port '%s'\n", CONF_FILE, linecount, curr->hostname, token);
 					sprintf_log(DEBUG_ERROR, "%s:%d > Size of hostname exceeds allowed characters: %lu of max %d", CONF_FILE, linecount, strlen(token), DNS_SIZE);
 					exit(1);
 				}
@@ -147,27 +158,10 @@ int load_config(void)
 						sprintf_log(DEBUG_WARNING, "Fail: %s max ports for this host reached!", curr->hostname);
 				}
 
-			}
-		
+			}		
 			token = strtok(NULL, " ");
 		}
-		// if we make it here, continue trying to process it.
-		/*while (*line)
-		{
-			int hasdot = 0;
-			char *myName;
-
-			printf("%c", *line++);
-		} */
-	
 	}
 
-
-
-		//printf("%d: %s", linecount, line);
-	
 	return OK;
-
-	
-	
 }

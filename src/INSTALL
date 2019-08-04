@@ -1,4 +1,4 @@
-/*                                                       )
+                                                         )
           ,%,                                     ) _(___[]_
           %%%,&&&, dnsfw.bacon.place   ,%%,      (;`       /\
           %Y/%&&&&  rlynk@bacon.place  %%%%   ___/_____)__/ _\__     ,%%,
@@ -9,12 +9,9 @@
        -= _ _ _ |/ _ ''_ " " ||[ -_ 4 |  _  _  _  _  _  _  _  _  _  _  _
                 '-(_)-(_)----'v'-(_)--'
        jgs-----------------------------------------------------------------
-*/
-#define IPTF_ADD_ONE "iptables -A INPUT -s %s/32 -p %s --dport %d -j ACCEPT\n"
-#define IPTF_ADD_FULL "iptables -A INPUT -s %s/32 -j ACCEPT\n"
-#define IPTF_DEL_ONE "iptables -D INPUT -s %s/32 -p %s --dport %d -j ACCEPT\n"
-#define IPTF_DEL_FULL "iptables -D INPUT -s %s/32 -j ACCEPT\n"
-#define IPTABLES_BINARY2 "/sbin/iptables"
 
-void iptables_add(char *ip, int port);
-void iptables_del(char *ip, int port);// full applies to both protocols
+1) Ensure a compatible gcc99 compiler is installed.
+2) Modify config.h to match your tastes.
+3) make
+4) Modify dnsfw.conf as required.
+5) Run on startup and profit.

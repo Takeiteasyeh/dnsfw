@@ -1,13 +1,15 @@
-/*
- * Bacon Dynamic Dns FireWall updater
- * This program comes with absolutely NO WARRANTY
- *
- * Raymond Lynk - rlynk@bacon.place
- * 
- * File: dnsfw.c
- * Info: main run file for the bdnsfw service 
- *
- */
+/*                                                       )
+          ,%,                                     ) _(___[]_
+          %%%,&&&, dnsfw.bacon.place   ,%%,      (;`       /\
+          %Y/%&&&&  rlynk@bacon.place  %%%%   ___/_____)__/ _\__     ,%%,
+        ^^^||^&\Y&^^^^^^^^^^^^^^^^^^^^^%Y/%^^/ (_()   (  | /____/\^^^%%%%^^
+          `    || _,..=xxxxxxxxxxxx,    ||   |(' |LI (.)I| | LI ||   %\Y%
+         -=      /L_Y.-"""""""""`,-n-. `    @'---|__||___|_|____||_   ||
+        ___-=___.--'[========]|L]J: []\ __________@//@___________) )______
+       -= _ _ _ |/ _ ''_ " " ||[ -_ 4 |  _  _  _  _  _  _  _  _  _  _  _
+                '-(_)-(_)----'v'-(_)--'
+       jgs-----------------------------------------------------------------
+*/
 
 #include <stdio.h>
 #include <string.h>
@@ -18,20 +20,18 @@
 #include "config.h"
 #include "dnsfw.h"
 #include "debug.h"
+//#include "hosts.h"
 #include "version.h"
 
 host headhost;
 host *pheadhost;
 char *myexename;
 	
-
 int main(int argc, char *argv[])
 {
 	myexename = malloc(sizeof(argv[0]));
 	myexename = argv[0];
 
-	//headhost = malloc(sizeof(host));
-	// do signal catches
 	if (signal(SIGINT, sig_handle) == SIG_ERR)
 		to_log(DEBUG_WARNING, "Unable to catch SIGINT");
 
@@ -41,17 +41,16 @@ int main(int argc, char *argv[])
 	if (signal(SIGTERM, sig_handle) == SIG_ERR)
 		to_log(DEBUG_WARNING, "Unable to catch SIGTERM handle");
 
-//	host *headhost = NULL; 
-//	headhost = malloc(sizeof(host));
-//	to_log(DEBUG_DEBUG, "starting up...");
-
 	sprintf_log(DEBUG_INFO, "dnsfw v%s starting...", getversion());
 	sprintf_log(DEBUG_INFO, "built: %s", __DATE__);
 
-	// we need to run as root
-	if (getuid() > 0)
+	// we need to run as root?
+	if (NEEDROOT == FALSE)
+		sprintf_log(DEBUG_WARNING, "skipping root check [may cause issues]");
+
+	else if (getuid() > 0)
 	{
-		sprintf_log(DEBUG_ERROR, "error: please run as root.");
+		sprintf_log(DEBUG_ERROR, "error: please run as root, terminating.");
 		exit(1);
 	}
 
@@ -62,18 +61,25 @@ int main(int argc, char *argv[])
 		if (!process_cli_args(argc, argv))
 			exit(1);
 	}
-	//printf("logging to %s\nparsing %s...\n", CONF_LOG, CONF_FILE);
+	
 	load_config();
 
 	sprintf_log(DEBUG_INFO, "Doing first run...");
 	run_dns_updates();
 
-	sprintf_log(DEBUG_INFO, "Falling to background...");
+
 	
-	
-	if (fork() > 0) // parent exit!
-		exit(0);
-	
+	if (FORKING == TRUE)
+	{
+		sprintf_log(DEBUG_INFO, "Falling to background...");
+		
+		if (fork() > 0) // parent exit!
+			exit(0);
+	}
+
+	else
+		sprintf_log(DEBUG_INFO, "Skipping fork()...");
+
 	sleep(30);
 	
 	while (1)
@@ -198,7 +204,6 @@ void run_dns_updates(void)
 			if (strcmp(cycle->currentIp, "0") == 0)
 			{
 				sprintf_log(DEBUG_INFO, "%s does not resolve, is ipv6, or resolves more than once, skipping.", cycle->hostname);
-			//	printf("%s does not resolve, is ipv6, or resolves more than once, skipping.\n", cycle->hostname);
 				cycle = cycle->next;
 				continue;
 			}
@@ -216,7 +221,8 @@ void run_dns_updates(void)
 					cycle = cycle->next;
 					continue;
 				}
-							// cycle through all our ports,
+
+				// cycle through all our ports,
 				for (int i = 0; i < MAX_PORTS; i++)
 				{
 					// if we hit a null we stop
@@ -224,8 +230,7 @@ void run_dns_updates(void)
 						break;
 
 					iptables_del(cycle->currentIp, cycle->ports[i]);
-					
-					// lu?
+
 					sprintf_log(DEBUG_INFO, "%s removed %d", cycle->hostname, cycle->ports[i]);
 				}
 
@@ -240,7 +245,6 @@ void run_dns_updates(void)
 		// if new ip is same as current we also continue.
 		else if (strcmp(ip, cycle->currentIp) == 0)
 		{
-			//printf("same ip, skip! %s\n", cycle->hostname);
 			cycle = cycle->next;
 			continue;
 		}
@@ -252,7 +256,6 @@ void run_dns_updates(void)
 			// if ip is not 0 we do need to remove old entries
 			if (strcmp(cycle->currentIp, "0") != 0)
 			{
-				//printf("%s: remove flag set ip %s\n", cycle->hostname, cycle->currentIp);
 				remove = TRUE; // just set the flag so we can do it when we cycle ports
 			}
 
@@ -287,21 +290,12 @@ void run_dns_updates(void)
 				}
 
 				iptables_add(ip, cycle->ports[i]);
-				// lu?
 				sprintf_log(DEBUG_INFO, "%s added %d", cycle->hostname, cycle->ports[i]);
 			}
 
 			strncpy(cycle->currentIp, ip, sizeof(cycle->currentIp) -1);
-
-			
-
-			//printf("%s: cycle complete\n", cycle->hostname);
 		}
 
-		// lets make sure that we do the firewall updates if the ip's do not match
-
-		
-		//iptables_add(ip, 22);
 		cycle = cycle->next;
 	}
 }

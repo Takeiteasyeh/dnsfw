@@ -1,4 +1,4 @@
-/*                                                       )
+                                                         )
           ,%,                                     ) _(___[]_
           %%%,&&&, dnsfw.bacon.place   ,%%,      (;`       /\
           %Y/%&&&&  rlynk@bacon.place  %%%%   ___/_____)__/ _\__     ,%%,
@@ -9,12 +9,11 @@
        -= _ _ _ |/ _ ''_ " " ||[ -_ 4 |  _  _  _  _  _  _  _  _  _  _  _
                 '-(_)-(_)----'v'-(_)--'
        jgs-----------------------------------------------------------------
-*/
-#define IPTF_ADD_ONE "iptables -A INPUT -s %s/32 -p %s --dport %d -j ACCEPT\n"
-#define IPTF_ADD_FULL "iptables -A INPUT -s %s/32 -j ACCEPT\n"
-#define IPTF_DEL_ONE "iptables -D INPUT -s %s/32 -p %s --dport %d -j ACCEPT\n"
-#define IPTF_DEL_FULL "iptables -D INPUT -s %s/32 -j ACCEPT\n"
-#define IPTABLES_BINARY2 "/sbin/iptables"
 
-void iptables_add(char *ip, int port);
-void iptables_del(char *ip, int port);// full applies to both protocols
+===== Welcome to Bacon.Place's Dynamic Dns Firewall Updater =====
+
+This software is provided without warranty of any kind, although we do our best
+to ensure quality of code.
+
+This application will parse a hosts-style, space delimetered set of ports and
+modify iptable entries as needed when given hostnames have a change of address.
