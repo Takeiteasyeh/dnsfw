@@ -38,7 +38,7 @@
 #define TYPE_IPTABLES 	0x001
 #define TYPE_IPCOP 		0x002
 
-#define FORKING 0 // set to 0 to stay in forground, ie, testing
-#define NEEDROOT 0 // set to 0 for basic testing to avoid root check
+#define FORKING 1 // set to 0 to stay in forground, ie, testing
+#define NEEDROOT 1 // set to 0 for basic testing to avoid root check
 
 int load_config(void);

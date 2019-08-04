@@ -20,6 +20,9 @@
 #include "debug.h"
 extern host *pheadhost;
 
+/***
+ * Load the list of ip and ports from the hard disk
+ */
 int load_config(void)
 {
 	char *line = NULL;
@@ -100,19 +103,26 @@ int load_config(void)
 			// We are not waiting for a hostname, assume (but verify) its a port list
 			else
 			{
-				size_t s;
+			//	size_t s;
 				
-				s = strlen(token) - 1;
-
-				if (token[s] == '\n')
-					token[s] = '\0';
+			//	s = strlen(token) - 1;
 
 				// cycle through and confirm we are only a number, deal with bounds later.
-				for (size_t k = 0; k <= s; k++)
+				for (size_t k = 0; token[k] != '\0'; k++)
 				{
 					//there is probably a cleaner way of doing all this... we will save it for when
 					// i actually know wtf im doing in this language (aka v2)
-					if (!isdigit(token[k]) && ((token[k] != '\0')))
+					if (token[k] == '\n')
+					{
+						break;
+					}
+
+					else if (isspace(token[k]))
+					{
+						sprintf_log(DEBUG_ERROR, "%s:%d > Host %s contains erroneous whitespaces'", CONF_FILE, linecount, curr->hostname);
+						exit(1);
+					}
+					else if (!isdigit(token[k]) && ((token[k] != '\0')))
 					{
 						sprintf_log(DEBUG_ERROR, "%s:%d > Host %s contains non-numeric port '%s'", CONF_FILE, linecount, curr->hostname, token);
 						exit(1);

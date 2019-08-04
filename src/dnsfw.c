@@ -182,12 +182,10 @@ void process_cli_help_param(char *topic)
 	}
 }
 
-
-void background_agent(void)
-{
-
-}
-
+/***
+ * Perform all the dns lookups and ip checks for
+ * iptable modifications.
+ */
 void run_dns_updates(void)
 {
 	host *cycle = NULL;
@@ -300,6 +298,9 @@ void run_dns_updates(void)
 	}
 }
 
+/***
+ * Handle all terminal signals
+ */
 void sig_handle(int sig)
 {
 	switch (sig)
@@ -322,6 +323,11 @@ void sig_handle(int sig)
 
 }
 
+/***
+ * Restart the application. Using this
+ * function will prevent a future call to HUP
+ * from working.
+ */
 void restart()
 {
 	char *args[]={ NULL};
@@ -334,6 +340,9 @@ void restart()
 	exit(0); // no reach
 }
 
+/***
+ * Gracefully shutdown the application
+ */
 void shutdown_gracefully(void)
 {
 	sprintf_log(DEBUG_INFO, "shutdown: removing iptable entries...");
@@ -342,6 +351,10 @@ void shutdown_gracefully(void)
 	exit(0);
 }
 
+/***
+ * Remove any known valid ip and ports from our
+ * ip tables configuration.
+ */
 void clear_iptable_entries(void)
 {
 	host *cycle;

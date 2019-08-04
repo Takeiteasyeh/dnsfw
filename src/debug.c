@@ -25,6 +25,10 @@ void to_log(int level, char *message)
 	return;
 }
 
+/***
+ * Write a formatted string, matching the given debug level,
+ * to the logfile specified in config.h
+ */
 void sprintf_log(int level, char *format, ...)
 {
 	va_list parg;
@@ -68,6 +72,9 @@ void sprintf_log(int level, char *format, ...)
 	va_end(parg);
 }
 
+/***
+ * Return a string of the matching debug level.
+ */
 char *levelname(int level)
 {
 	char *type = NULL;

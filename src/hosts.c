@@ -22,7 +22,9 @@
 #include "dnsfw.h"
 #include "debug.h"
 
-
+/***
+ * Add a port to the selected host
+ */
 int addport(host *selected, int port)
 {
 	int total = selected->totalports;
@@ -55,9 +57,8 @@ int addport(host *selected, int port)
 	return OK;
 }
 /***
- * Im tired of fucking with this code... addhost is called for even the head host. we will figure that
- * shit out in this block since creating objects and creating pointers in different locations of the
- * detached script is breaking things, including me. -rlynk
+ * Add a hostname to our list of known hosts. 
+ * One day maybe we should check for duplicates.
  */
 host *addhost(char *name)
 {
