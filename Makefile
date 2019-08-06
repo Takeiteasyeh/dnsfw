@@ -3,7 +3,7 @@ SOURCE	= src/dnsfw.c src/iptables.c src/config.c src/hosts.c src/version.c src/d
 HEADER	= includes/dnsfw.h include/iptables.h includes/config.h includes/hosts.h includes/version.h includes/debug.h
 OUT	= dnsfw
 CC	 = gcc
-FLAGS	 = -g -c -Wall
+FLAGS	 = -std=gnu99 -g -c -Wall
 LFLAGS	 = -lpthread
 IDIR = includes
 CFLAGS = -I$(IDIR)

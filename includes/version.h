@@ -16,7 +16,7 @@
 #define VERSION_FORMAT "%d.%d.%d-%s"
 #define VERSION_MAJOR 1
 #define VERSION_MINOR 0
-#define VERSION_PATCH 0
+#define VERSION_PATCH 1
 #define VERSION_TAG "alpha2"
 
 typedef struct Version

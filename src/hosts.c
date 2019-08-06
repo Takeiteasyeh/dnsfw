@@ -68,13 +68,7 @@ host *addhost(char *name)
 		sprintf_log(DEBUG_ERROR, "error: dns name exceeds rfc standard of 253 characters (now: %lu)", strlen(name));
 		exit(1);
 	}
-
-	//host *current;
-
-	// are we initialized yet? // this code should be removed as i think its useless now
-	if (pheadhost == NULL)
-		pheadhost = malloc(sizeof(host));
-
+	
 	host *parent = pheadhost;
 	
 	// if this is the first entry we dont do next things

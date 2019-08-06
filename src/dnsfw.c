@@ -23,14 +23,16 @@
 //#include "hosts.h"
 #include "version.h"
 
-host headhost;
+host headhost = { .currentIp = "0", .next = NULL};
 host *pheadhost;
 char *myexename;
 	
 int main(int argc, char *argv[])
 {
 	myexename = malloc(sizeof(argv[0]));
+	pheadhost = malloc(sizeof(host));
 	myexename = argv[0];
+	pheadhost = &headhost;
 
 	if (signal(SIGINT, sig_handle) == SIG_ERR)
 		to_log(DEBUG_WARNING, "Unable to catch SIGINT");
