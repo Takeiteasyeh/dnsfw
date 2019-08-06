@@ -1,4 +1,4 @@
-/*                                                       )
+                                                             )
           ,%,                                     ) _(___[]_
           %%%,&&&, dnsfw.bacon.place   ,%%,      (;`       /\
           %Y/%&&&&  rlynk@bacon.place  %%%%   ___/_____)__/ _\__     ,%%,
@@ -9,30 +9,18 @@
        -= _ _ _ |/ _ ''_ " " ||[ -_ 4 |  _  _  _  _  _  _  _  _  _  _  _
                 '-(_)-(_)----'v'-(_)--'
        jgs-----------------------------------------------------------------
-*/
-#include <stdio.h>
-#include <assert.h>
 
-#define VERSION_FORMAT "%d.%d.%d-%s"
-#define VERSION_MAJOR 1
-<<<<<<< HEAD
-#define VERSION_MINOR 2
-#define VERSION_PATCH 0
-#define VERSION_TAG "stable"
-=======
-#define VERSION_MINOR 2
-#define VERSION_PATCH 0
-#define VERSION_TAG "stable"
->>>>>>> v120
+################
+# * changes
+# ! issues
+# + additions
+################
 
-typedef struct Version
-{
-	int major;
-	int minor;
-	int patch;
-	char *tag[32];
-} version;
+== v1.2.0 : August 30, 2019 ==
++ added CHANGES like a real application.
++ added UPGRADES file.
 
-const char *getversion(void);
+* debug level is now determined by config file.
 
-
+! config file is not backwards compatible. see UPGRADES.
+! extra spaces in config file causes incorrect parsing as a wildcard.
