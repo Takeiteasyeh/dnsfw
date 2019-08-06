@@ -18,6 +18,7 @@
 #define TRUE 1
 #define FALSE 0 
 
+int debugLevel;
 int process_cli_args(int argc, char *argv[]);
 void process_cli_help(void);
 void process_cli_help_param(char *topic);

@@ -26,6 +26,7 @@
 host headhost;
 host *pheadhost;
 char *myexename;
+int debugLevel = (DEBUG_INFO & DEBUG_ERROR & DEBUG_WARNING); // default debug level is INFO/WARN/ERROR
 	
 int main(int argc, char *argv[])
 {
@@ -42,7 +43,8 @@ int main(int argc, char *argv[])
 		to_log(DEBUG_WARNING, "Unable to catch SIGTERM handle");
 
 	sprintf_log(DEBUG_INFO, "dnsfw v%s starting...", getversion());
-	sprintf_log(DEBUG_INFO, "built: %s", __DATE__);
+	sprintf_log(DEBUG_INFO, "built: %s with gcc%d.%d", __DATE__, __GNUC__, __GNUC_MINOR__);
+	sprintf_log(DEBUG_INFO, "author: rlynk@bacon.place - dnsfw.bacon.place");
 
 	// we need to run as root?
 	if (NEEDROOT == FALSE)

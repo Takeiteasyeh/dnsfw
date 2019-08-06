@@ -85,8 +85,8 @@ char *levelname(int level)
 			type = "None";
 			break;
 
-		case DEBUG_FATAL:
-			type = "Fatal";
+		case DEBUG_NOTICE:
+			type = "Notice";
 			break;
 
 		case DEBUG_ERROR:

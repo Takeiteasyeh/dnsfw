@@ -56,26 +56,76 @@ int load_config(void)
 			if (version > 0)
 			{
 				// We already have a version tag so why are we here?
-				sprintf_log(DEBUG_ERROR, "bdnsdw.conf:%d -> duplicate version tag.", linecount);
+				sprintf_log(DEBUG_ERROR, "%s:%d -> duplicate version tag.", CONF_FILE, linecount);
 				exit(0);
 			}
 
 			if (!isdigit(line[3]))
 			{
 				// Our version tag is not a numerical value, single digit in this case.
-				sprintf_log(DEBUG_ERROR, "bdnsdw.conf:%d -> version %c is not numeric", linecount, line[3]);
+				sprintf_log(DEBUG_ERROR, "%s:%d -> version %c is not numeric",  CONF_FILE, linecount, line[3]);
 				exit(0);
 			}
 			// the version of our database is too old to continue in this way.
 			if ((int)line[3] < CONF_VERSION)
 			{
-				sprintf_log(DEBUG_ERROR, "Config version [%d] is too old (expected %d). Please see UPGRADE.TXT", line[3], CONF_VERSION);
+				sprintf_log(DEBUG_ERROR, "%s:%d config version [%d] is too old (expected %d). Please see UPGRADE.TXT",  CONF_FILE, linecount, line[3], CONF_VERSION);
 				exit(0);
 			}
 
 			version = (int)line[3];
 			continue;
 		} // end of version tag
+
+		if ((line[0] == '!') && (line[1] == 'D') && line[2] == ':') // debug level!
+		{
+			int userDebugLevel=0;
+
+			if (sscanf(line, "!D:%d", &userDebugLevel) == 0)
+			{
+				sprintf_log(DEBUG_WARNING, "%s:%d debug level not numberic; using default.", CONF_FILE, linecount);
+				continue;
+
+			}
+
+			// we appear to have an integer debug level, not necessarily valid
+			if (userDebugLevel > 0)
+			{ 
+				char *levelchars[10]; // to store our printable debug level
+
+				int remainder = userDebugLevel;
+
+				// check all valid legit level
+				if ((userDebugLevel & DEBUG_NOTICE) != 0)
+				{
+					strcat(levelchars, 'N');
+					remainder &= ~DEBUG_NOTICE;
+				}
+
+				if ((userDebugLevel & DEBUG_ERROR) != 0)
+				{
+					strcat(levelchars, 'E');
+					remainder &= ~DEBUG_ERROR;
+				}
+
+				if ((userDebugLevel & DEBUG_WARNING) != 0)
+				{
+					strcat(levelchars, 'W');
+					remainder &= ~DEBUG_WARNING;
+				}
+
+				// if we have remainders someone fucked up their math.
+				if (remainder > 0)
+				{
+					sprintf_log(DEBUG_WARNING, "%s:%d debug level contains unknown values, skipping.", CONF_FILE, linecount);
+					continue;
+				}
+
+				sprintf_log(DEBUG_INFO, "%s:%d set debug levels [%s]", CONF_FILE, linecount, levelchars);
+				debugLevel = userDebugLevel;
+			}
+			continue;
+		}
 
 		char *token = strtok(line, " "); // seperate by space
 		host *curr;
@@ -92,6 +142,14 @@ int load_config(void)
 					sprintf_log(DEBUG_ERROR, "%s:%d > Size of hostname exceeds allowed characters: %lu of max %d", CONF_FILE, linecount, strlen(token), DNS_SIZE);
 					exit(1);
 				}
+
+				if (!valid_hostname(token))
+				{
+					sprintf_log(DEBUG_ERROR, "%s:%d > Hostname '%s' has invalid characters", CONF_FILE, linecount, token);
+					exit(1);
+				}
+
+				// cycle and make sure we only have valid characters
 
 				curr = addhost(token);
 				sprintf_log(DEBUG_INFO, "host add: %s", curr->hostname);
@@ -174,4 +232,24 @@ int load_config(void)
 	}
 
 	return OK;
+}
+
+int valid_hostname(const char *host)
+{
+	size_t len = strlen(host);
+
+	if (len < 3)
+		return FALSE;
+
+	size_t i = 0;
+
+	while (host[i] != '\0')
+	{
+		if (!isalpha(host[i]) && (host[i] != '-') && (host[i] != '.'))
+			return FALSE;
+
+		i++;
+	}
+
+	return TRUE;
 }

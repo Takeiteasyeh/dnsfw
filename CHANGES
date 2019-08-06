@@ -11,16 +11,27 @@
        jgs-----------------------------------------------------------------
 
 ################
-# * changes
-# ! issues
 # + additions
+# * changes
+# ! known issues
+# x fixes
 ################
 
-== v1.2.0 : August 30, 2019 ==
+====================================
+=== v1.2.0-rc1 : August 30, 2019 ===
 + added CHANGES like a real application.
 + added UPGRADES file.
-
 * debug level is now determined by config file.
+* config file is not backwards compatible. see UPGRADES.
+* config and log files are now dnsfw.conf and .log, dropping the d.
+* Makefile now specifies std=gnu99 during build.
 
-! config file is not backwards compatible. see UPGRADES.
 ! extra spaces in config file causes incorrect parsing as a wildcard.
+
+x better sanitization of hostname characters in config
+
+======================================
+=== v1.0.1-alpha2 : August 5, 2019 ===
+x fixed an issue that prevented compile in some gcc versions.
+
+! this changelog is not present in this version, haha
