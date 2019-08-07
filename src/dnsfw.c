@@ -26,7 +26,7 @@
 host headhost = { .currentIp = "0", .next = NULL };
 host *pheadhost;
 char *myexename;
-int debugLevel; // default debug level is INFO/WARN/ERROR
+int debugLevel = 0; // default debug level is INFO/WARN/ERROR
 	
 int main(int argc, char *argv[])
 {
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 	myexename = argv[0];
 	pheadhost = malloc(sizeof(host));
 	pheadhost = &headhost;
-	debugLevel = (DEBUG_INFO & DEBUG_ERROR & DEBUG_WARNING);
+	debugLevel = (DEBUG_INFO | DEBUG_ERROR | DEBUG_WARNING);
 
 	if (signal(SIGINT, sig_handle) == SIG_ERR)
 		to_log(DEBUG_WARNING, "Unable to catch SIGINT");
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 	if (signal(SIGTERM, sig_handle) == SIG_ERR)
 		to_log(DEBUG_WARNING, "Unable to catch SIGTERM handle");
 
-	sprintf_log(DEBUG_INFO, "dnsfw v%s starting...", getversion());
+	sprintf_log(DEBUG_INFO, "dnsfw v%s [debug %d] starting.", getversion(), debugLevel);
 	sprintf_log(DEBUG_INFO, "built: %s with gcc%d.%d", __DATE__, __GNUC__, __GNUC_MINOR__);
 	sprintf_log(DEBUG_INFO, "author: rlynk@bacon.place - dnsfw.bacon.place");
 
