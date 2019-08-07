@@ -11,7 +11,7 @@ CFLAGS = -I$(IDIR)
 all: $(OBJS)
 	$(CC) -g $(OBJS) -o $(OUT) $(LFLAGS) $(CFLAGS)
 	@echo Please modify dnsfw.conf before running:
-	@echo make, make install, make service
+	@echo make install or make service
 
 src/iptables.o: src/iptables.c
 	$(CC) $(FLAGS) src/iptables.c -o src/iptables.o $(CFLAGS)
@@ -35,9 +35,18 @@ clean:
 	rm -f $(OBJS) $(OUT)
 
 install:
-	install -m 644 dnsfw /usr/sbin/
-	install -m 644 dnsfw.conf /etc/
+	install -m 750 dnsfw /usr/sbin/
+	install -m 644 dnsfw.conf /etc/bacon/
 	@echo Please read INSTALL to continue.
+
+remove:
+	systemctl stop dnsfw.service
+	systemctl disable dnsfw.service
+	rm /usr/sbin/dnsfw
+	rm /etc/bacon/dnsfw.conf
+	systemctl daemon-reload
+	@echo All removed.
+
 
 service:
 	install -m 644 dnsfw.service /etc/systemd/system/

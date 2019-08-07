@@ -16,4 +16,3 @@
 4) Modify dnsfw.conf as required.
 5) make install
 6) systemd users: run 'make service'
-5) Run on startup and profit.

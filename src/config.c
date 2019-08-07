@@ -83,12 +83,19 @@ int load_config(void)
 	unsigned short int waitHost = TRUE;
 	size_t len = 0;
 	__ssize_t read;
-	FILE *file = fopen(CONF_FILE, "r");
+
+	// try and read from absolute path first, then, local directory
+	FILE *file = fopen(CONF_FILE_PREFIX CONF_FILE, "r");
 
 	if (file == NULL)
 	{
-		sprintf_log(DEBUG_ERROR, "Unable to read from %s", CONF_FILE);
-		return FAILED;
+		file = fopen(CONF_FILE, "r");
+
+		if (file == NULL)
+		{
+			sprintf_log(DEBUG_ERROR, "Unable to read from %s", CONF_FILE);
+			return FAILED;
+		}
 	}
 
 

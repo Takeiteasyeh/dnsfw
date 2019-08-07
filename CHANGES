@@ -19,8 +19,11 @@
 
 ====================================
 === v1.2.0-rc1 : August 30, 2019 ===
++ we are now able to use systemd as a service.
++ makefile now supports make install && make service
 + added CHANGES like a real application.
 + added UPGRADES file.
+* we no longer fork by default due to systemd (see -f startup flag)
 * debug level can now be set in config.
 * config file is not backwards compatible. see UPGRADES.
 * config and log files are now dnsfw.conf and .log, dropping the d.

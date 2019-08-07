@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 Restart=no
-ExecSart=/usr/local/bin/dnsfw
+ExecStart=/usr/sbin/dnsfw
 
 [Install]
 WantedBy=multi-user.target

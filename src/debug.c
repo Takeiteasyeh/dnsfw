@@ -20,6 +20,7 @@
 
 extern int debugLevel;
 
+
 // just a shortcut to sprintf_log
 void to_log(int level, char *message)
 {
@@ -65,11 +66,15 @@ void sprintf_log(int level, char *format, ...)
 
 	sprintf(buffer, "[%s]<%c> %s\n", timebuff2, lname[0], prebuffer);
 	
-	fptr = fopen(CONF_LOG, "a");
+	// try to write system side first
+	fptr = fopen(CONF_LOG_PREFIX CONF_LOG, "a");
 
 	if (fptr == NULL)
 	{
-		printf("Unable to write to log file: %s\n", CONF_LOG);
+		fptr = fopen(CONF_LOG, "a");
+
+		if (fptr == NULL)
+			printf("Unable to write to log file: %s\n", CONF_LOG);
 	}
 
 	else
