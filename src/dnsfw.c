@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 
 	if (signal(SIGTERM, sig_handle) == SIG_ERR)
 		to_log(DEBUG_WARNING, "Unable to catch SIGTERM handle");
-
+//	printf("file: %x", CONFIG_FILE_ORIG);
 	sprintf_log(DEBUG_INFO, "dnsfw v%s [debug %d] starting.", getversion(), debugLevel);
 	sprintf_log(DEBUG_INFO, "built: %s with gcc%d.%d", __DATE__, __GNUC__, __GNUC_MINOR__);
 	sprintf_log(DEBUG_INFO, "author: rlynk@bacon.place - dnsfw.bacon.place");
@@ -398,4 +398,17 @@ void clear_iptable_entries(void)
 
 		cycle = cycle->next;
 	}
+}
+
+void genconf(void)
+{
+	FILE *file = fopen(CONF_FILE, "r");
+
+	// file aleady exists, we exit at this point to prevent accidents.
+	if (file != NULL)
+	{
+		printf("unable to re-create %s: file exists.", CONF_FILE);
+		exit(1);
+	}
+
 }

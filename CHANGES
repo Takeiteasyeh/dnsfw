@@ -21,7 +21,7 @@
 === v1.2.0-rc1 : August 30, 2019 ===
 + added CHANGES like a real application.
 + added UPGRADES file.
-* debug level is now determined by config file.
+* debug level can now be set in config.
 * config file is not backwards compatible. see UPGRADES.
 * config and log files are now dnsfw.conf and .log, dropping the d.
 * Makefile now specifies std=gnu99 during build.
