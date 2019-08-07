@@ -18,6 +18,8 @@
 #include "debug.h"
 #include "config.h"
 
+extern int debugLevel;
+
 // just a shortcut to sprintf_log
 void to_log(int level, char *message)
 {
@@ -37,10 +39,14 @@ void sprintf_log(int level, char *format, ...)
 	char timebuff[200];
 	char timebuff2[200];
 
-	if ((level & DEBUG_LEVEL) == 0)
+	if ((level & debugLevel) == 0)
 	{
 		return;
 	}
+/*	if ((level & DEBUG_LEVEL) == 0)
+	{
+		return;
+	} */
 
 	FILE *fptr;
 
@@ -54,7 +60,10 @@ void sprintf_log(int level, char *format, ...)
 	sprintf(timebuff, "%s", (asctime(localtime(&ltime))));
 	snprintf(timebuff2, strlen(timebuff), "%s", timebuff);
 
-	sprintf(buffer, "[%s] %s\n", timebuff2, prebuffer);
+	char *lname;
+	lname = levelname(level);
+
+	sprintf(buffer, "[%s]<%c> %s\n", timebuff2, lname[0], prebuffer);
 	
 	fptr = fopen(CONF_LOG, "a");
 
