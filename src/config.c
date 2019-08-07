@@ -91,27 +91,44 @@ int load_config(void)
 			// we appear to have an integer debug level, not necessarily valid
 			if (userDebugLevel > 0)
 			{ 
-				char *levelchars[10]; // to store our printable debug level
+				char levelchars[10]; // to store our printable debug level
 
 				int remainder = userDebugLevel;
 
 				// check all valid legit level
 				if ((userDebugLevel & DEBUG_NOTICE) != 0)
 				{
-					strcat(levelchars, 'N');
+					strcat(levelchars, "N");
 					remainder &= ~DEBUG_NOTICE;
 				}
 
 				if ((userDebugLevel & DEBUG_ERROR) != 0)
 				{
-					strcat(levelchars, 'E');
+					strcat(levelchars, "E");
 					remainder &= ~DEBUG_ERROR;
 				}
 
 				if ((userDebugLevel & DEBUG_WARNING) != 0)
 				{
-					strcat(levelchars, 'W');
+					strcat(levelchars, "W");
 					remainder &= ~DEBUG_WARNING;
+				}
+
+				if ((userDebugLevel & DEBUG_INFO) != 0)
+				{
+					strcat(levelchars, "I");
+					remainder &= ~DEBUG_INFO;
+				}
+
+				if ((userDebugLevel & DEBUG_DEBUG) != 0)
+				{
+					strcat(levelchars, "D");
+					remainder &= ~DEBUG_DEBUG;
+				}
+				if ((userDebugLevel & DEBUG_TRACE) != 0)
+				{
+					strcat(levelchars, "T");
+					remainder &= ~DEBUG_TRACE;
 				}
 
 				// if we have remainders someone fucked up their math.
@@ -123,7 +140,10 @@ int load_config(void)
 
 				sprintf_log(DEBUG_INFO, "%s:%d set debug levels [%s]", CONF_FILE, linecount, levelchars);
 				debugLevel = userDebugLevel;
+
+				continue;
 			}
+			
 			continue;
 		}
 
