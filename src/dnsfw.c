@@ -27,6 +27,8 @@ host headhost = { .currentIp = "0", .next = NULL };
 host *pheadhost;
 char *myexename;
 int debugLevel = 0; // default debug level is INFO/WARN/ERROR
+int forkable = 0;
+int block = 0;
 	
 int main(int argc, char *argv[])
 {
@@ -74,7 +76,7 @@ int main(int argc, char *argv[])
 
 
 	
-	if (FORKING == TRUE)
+	if ((FORKING == TRUE) || (forkable))
 	{
 		sprintf_log(DEBUG_INFO, "Falling to background...");
 		
@@ -115,7 +117,13 @@ int process_cli_args(int argc, char *argv[])
 	{
 		printf("genconf\n");
 	} 
+	
+	else if ((strncmp(argv[1], "-f", 3) == 0) || (strncmp(argv[1], "--fork", 6) == 0))
+	{
+		printf("test block\n");
+	} 
 
+/*
 	else if ((strncmp(argv[1], "-l", 3) == 0) || (strncmp(argv[1], "--list", 7) == 0))
 	{
 		printf("test block\n");
@@ -129,7 +137,7 @@ int process_cli_args(int argc, char *argv[])
 	else if ((strncmp(argv[1], "-r", 3) == 0) || (strncmp(argv[1], "--remove", 9) == 0))
 	{
 		printf("test block\n");
-	} 
+	} */
 
 	return retcode;
 }
@@ -141,9 +149,9 @@ void process_cli_help(void)
 	printf("#\n");
 	printf("# -h | --help          This screen.\n");
 	printf("# -g | --genconf       Generate the first-run ip config.\n");
-	printf("# -l | --list          List rDNS entries -- not implemented.\n");
-	printf("# -a | --add           Adds entries to the rDNS database.\n");
-	printf("# -r | --remove        Remove entries from the rDNS database.\n");
+	printf("# -f | --fork          Fall to background on run.\n");
+	printf("# -a | --netconf       Download a configuration file.\n");
+	printf("# for more help, use, 'help fork', ect.\n");
 	printf("# end of help index.\n");
 }
 
@@ -157,6 +165,7 @@ void process_cli_help_param(char *topic)
 		printf("# -g | --genconf      You will be prompted.\n");
 	}
 
+/* unused now, possibly deprecated
 	else if (strncmp(topic, "list", 6) == 0)
 	{
 		printf("# bdnsfw: help list\n");
@@ -174,6 +183,14 @@ void process_cli_help_param(char *topic)
 	}
 
 	else if (strncmp(topic, "remove", 6) == 0)
+	{
+		printf("# bdnsfw: help remove\n");
+		printf("# description: Remove from the rDNS hosts.\n");
+		printf("#\n");
+		printf("# -r | --remove [host]      Removes the given host\n");
+	}
+*/
+	else if (strncmp(topic, "fork", 6) == 0)
 	{
 		printf("# bdnsfw: help remove\n");
 		printf("# description: Remove from the rDNS hosts.\n");
