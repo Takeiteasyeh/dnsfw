@@ -23,16 +23,29 @@
 //#include "hosts.h"
 #include "version.h"
 
+<<<<<<< HEAD
 host headhost = { .currentIp = "0", .next = NULL};
+=======
+host headhost = { .currentIp = "0", .next = NULL };
+>>>>>>> v120
 host *pheadhost;
 char *myexename;
+int debugLevel = 0; // default debug level is INFO/WARN/ERROR
+int forkable = 0;
+int block = 0;
 	
 int main(int argc, char *argv[])
 {
 	myexename = malloc(sizeof(argv[0]));
 	pheadhost = malloc(sizeof(host));
 	myexename = argv[0];
+<<<<<<< HEAD
 	pheadhost = &headhost;
+=======
+	pheadhost = malloc(sizeof(host));
+	pheadhost = &headhost;
+	debugLevel = (DEBUG_INFO | DEBUG_ERROR | DEBUG_WARNING);
+>>>>>>> v120
 
 	if (signal(SIGINT, sig_handle) == SIG_ERR)
 		to_log(DEBUG_WARNING, "Unable to catch SIGINT");
@@ -42,9 +55,10 @@ int main(int argc, char *argv[])
 
 	if (signal(SIGTERM, sig_handle) == SIG_ERR)
 		to_log(DEBUG_WARNING, "Unable to catch SIGTERM handle");
-
-	sprintf_log(DEBUG_INFO, "dnsfw v%s starting...", getversion());
-	sprintf_log(DEBUG_INFO, "built: %s", __DATE__);
+//	printf("file: %x", CONFIG_FILE_ORIG);
+	sprintf_log(DEBUG_INFO, "dnsfw v%s [debug %d] starting.", getversion(), debugLevel);
+	sprintf_log(DEBUG_INFO, "built: %s with gcc%d.%d", __DATE__, __GNUC__, __GNUC_MINOR__);
+	sprintf_log(DEBUG_INFO, "author: rlynk@bacon.place - dnsfw.bacon.place");
 
 	// we need to run as root?
 	if (NEEDROOT == FALSE)
@@ -71,7 +85,7 @@ int main(int argc, char *argv[])
 
 
 	
-	if (FORKING == TRUE)
+	if ((FORKING == TRUE) || (forkable))
 	{
 		sprintf_log(DEBUG_INFO, "Falling to background...");
 		
@@ -112,7 +126,13 @@ int process_cli_args(int argc, char *argv[])
 	{
 		printf("genconf\n");
 	} 
+	
+	else if ((strncmp(argv[1], "-f", 3) == 0) || (strncmp(argv[1], "--fork", 6) == 0))
+	{
+		printf("test block\n");
+	} 
 
+/*
 	else if ((strncmp(argv[1], "-l", 3) == 0) || (strncmp(argv[1], "--list", 7) == 0))
 	{
 		printf("test block\n");
@@ -126,7 +146,7 @@ int process_cli_args(int argc, char *argv[])
 	else if ((strncmp(argv[1], "-r", 3) == 0) || (strncmp(argv[1], "--remove", 9) == 0))
 	{
 		printf("test block\n");
-	} 
+	} */
 
 	return retcode;
 }
@@ -138,9 +158,9 @@ void process_cli_help(void)
 	printf("#\n");
 	printf("# -h | --help          This screen.\n");
 	printf("# -g | --genconf       Generate the first-run ip config.\n");
-	printf("# -l | --list          List rDNS entries -- not implemented.\n");
-	printf("# -a | --add           Adds entries to the rDNS database.\n");
-	printf("# -r | --remove        Remove entries from the rDNS database.\n");
+	printf("# -f | --fork          Fall to background on run.\n");
+	printf("# -a | --netconf       Download a configuration file.\n");
+	printf("# for more help, use, 'help fork', ect.\n");
 	printf("# end of help index.\n");
 }
 
@@ -154,6 +174,7 @@ void process_cli_help_param(char *topic)
 		printf("# -g | --genconf      You will be prompted.\n");
 	}
 
+/* unused now, possibly deprecated
 	else if (strncmp(topic, "list", 6) == 0)
 	{
 		printf("# bdnsfw: help list\n");
@@ -171,6 +192,14 @@ void process_cli_help_param(char *topic)
 	}
 
 	else if (strncmp(topic, "remove", 6) == 0)
+	{
+		printf("# bdnsfw: help remove\n");
+		printf("# description: Remove from the rDNS hosts.\n");
+		printf("#\n");
+		printf("# -r | --remove [host]      Removes the given host\n");
+	}
+*/
+	else if (strncmp(topic, "fork", 6) == 0)
 	{
 		printf("# bdnsfw: help remove\n");
 		printf("# description: Remove from the rDNS hosts.\n");
@@ -395,4 +424,17 @@ void clear_iptable_entries(void)
 
 		cycle = cycle->next;
 	}
+}
+
+void genconf(void)
+{
+	FILE *file = fopen(CONF_FILE, "r");
+
+	// file aleady exists, we exit at this point to prevent accidents.
+	if (file != NULL)
+	{
+		printf("unable to re-create %s: file exists.", CONF_FILE);
+		exit(1);
+	}
+
 }

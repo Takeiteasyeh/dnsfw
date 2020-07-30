@@ -11,16 +11,35 @@
        jgs-----------------------------------------------------------------
 
 ################
-# * changes
-# ! issues
 # + additions
+# * changes
+# ! known issues
+# x fixes
 ################
 
-== v1.2.0 : August 30, 2019 ==
+====================================
+=== v1.2.0-rc1 : August 30, 2019 ===
++ we try to log to /var/log/dnsfw.log by default.
++ we install to /usr/sbin/ by default.
++ we are now able to use systemd as a service.
++ makefile now supports make install && make service
 + added CHANGES like a real application.
 + added UPGRADES file.
 
-* debug level is now determined by config file.
+* config keys are more verbose
+* cycle timer increased from 1 minute to 2.
+* we no longer fork by default due to systemd (see -f startup flag)
+* debug level can now be set in config.
+* config file is not backwards compatible.
+* config and log files are now dnsfw.conf and .log, dropping the d.
+* Makefile now specifies std=gnu99 during build.
 
-! config file is not backwards compatible. see UPGRADES.
 ! extra spaces in config file causes incorrect parsing as a wildcard.
+! reload via HUP only works once; usurped due to systemctl usage instead.
+x better sanitization of hostname characters in config
+
+======================================
+=== v1.0.1-alpha2 : August 5, 2019 ===
+x fixed an issue that prevented compile in some gcc versions.
+
+! this changelog is not present in this version, haha

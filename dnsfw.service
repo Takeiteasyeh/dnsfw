@@ -1,0 +1,11 @@
+[Unit]
+Description=bdns firewall updater
+After=network.target
+
+[Service]
+Type=simple
+Restart=no
+ExecStart=/usr/sbin/dnsfw
+
+[Install]
+WantedBy=multi-user.target

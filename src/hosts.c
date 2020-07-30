@@ -77,6 +77,8 @@ host *addhost(char *name)
 		strncpy(parent->hostname, name, sizeof(parent->hostname) - 1);
 		strcpy(parent->currentIp, "0");
 		parent->prev = NULL;
+		
+		parent->next = malloc(sizeof(host));
 		parent->next = NULL;
 		parent->totalports = 0;
 		parent->is_wildcard = FALSE;

@@ -14,4 +14,17 @@
 2) Modify config.h to match your tastes.
 3) make
 4) Modify dnsfw.conf as required.
-5) Run on startup and profit.
+5) make install
+6) systemd users: run 'make service'
+7) figure out a startup method
+
+
+Notes:
+
+* binaries are installed to /usr/sbin/dnsfw
+* config is discoverable at /etc/dnsfw.conf
+* log file is writable at /var/log/dnsfw.log
+
+(if log or config is not readable/writable in their
+respective directory, we will default to looking for
+these files in the applications root directory.)
