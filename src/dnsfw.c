@@ -23,11 +23,11 @@
 //#include "hosts.h"
 #include "version.h"
 
-<<<<<<< HEAD
-host headhost = { .currentIp = "0", .next = NULL};
-=======
+//<<<<<<< HEAD
+//host headhost = { .currentIp = "0", .next = NULL};
+//=======
 host headhost = { .currentIp = "0", .next = NULL };
->>>>>>> v120
+//>>>>>>> v120
 host *pheadhost;
 char *myexename;
 int debugLevel = 0; // default debug level is INFO/WARN/ERROR
@@ -39,13 +39,13 @@ int main(int argc, char *argv[])
 	myexename = malloc(sizeof(argv[0]));
 	pheadhost = malloc(sizeof(host));
 	myexename = argv[0];
-<<<<<<< HEAD
-	pheadhost = &headhost;
-=======
+//<<<<<<< HEAD
+//	pheadhost = &headhost;
+//=======
 	pheadhost = malloc(sizeof(host));
 	pheadhost = &headhost;
 	debugLevel = (DEBUG_INFO | DEBUG_ERROR | DEBUG_WARNING);
->>>>>>> v120
+//>>>>>>> v120
 
 	if (signal(SIGINT, sig_handle) == SIG_ERR)
 		to_log(DEBUG_WARNING, "Unable to catch SIGINT");
