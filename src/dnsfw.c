@@ -30,6 +30,8 @@ host headhost = { .currentIp = "0", .next = NULL };
 //>>>>>>> v120
 host *pheadhost;
 char *myexename;
+//char lasterror[1024];
+//int lastrepeatcount = 0;
 int debugLevel = 0; // default debug level is INFO/WARN/ERROR
 int forkable = 0;
 int block = 0;

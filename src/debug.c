@@ -19,6 +19,8 @@
 #include "config.h"
 
 extern int debugLevel;
+char lasterror[1024];
+int lastrepeatcount = 0;
 
 
 // just a shortcut to sprintf_log
@@ -39,20 +41,19 @@ void sprintf_log(int level, char *format, ...)
 	char prebuffer[1024];
 	char timebuff[200];
 	char timebuff2[200];
+	//int repeat = 0;
 
 	if ((level & debugLevel) == 0)
 	{
 		return;
 	}
-/*	if ((level & DEBUG_LEVEL) == 0)
-	{
-		return;
-	} */
 
 	FILE *fptr;
 
 	time_t ltime;
 	ltime = time(NULL);
+	char *lname;
+	lname = levelname(level);
 
 	va_start(parg, format);
 	size_t buffsize = 1024;
@@ -61,10 +62,36 @@ void sprintf_log(int level, char *format, ...)
 	sprintf(timebuff, "%s", (asctime(localtime(&ltime))));
 	snprintf(timebuff2, strlen(timebuff), "%s", timebuff);
 
-	char *lname;
-	lname = levelname(level);
+	// check if this error is the same as the last error if a last error has been set
+	printf("Repeat(%d):\n now> %s\nlast> %s\n", lastrepeatcount, prebuffer, lasterror);
+	if (strncmp(prebuffer, lasterror, 1023) == 0)
+	{
+		lastrepeatcount++;
+	}
 
-	snprintf(buffer, sizeof(buffer) -1, "[%s]<%c> %s\n", timebuff2, lname[0], prebuffer);
+	// not the same
+	else
+	{
+		// if lastrepeatcount is greater than 0, we had a repeat
+		if (lastrepeatcount > 0)
+		{
+			snprintf(buffer, sizeof(buffer) - 1,
+					 "[%s] <R> Last error repeats %d more times\n[%s]<%c> %s\n", timebuff2, lastrepeatcount, timebuff2, lname[0], prebuffer);
+		}
+
+		else
+		{
+			snprintf(buffer, sizeof(buffer) - 1, "[%s]<%c> %s\n", timebuff2, lname[0], prebuffer);
+		}
+
+		// now set last error and set count to 0
+		lastrepeatcount = 0;
+		strncpy(lasterror, prebuffer, sizeof(lasterror) - 1);
+		//memcpy(lasterror, prebuffer, 1023);
+	}
+	
+
+	//snprintf(buffer, sizeof(buffer) -1, "[%s]<%c> %s\n", timebuff2, lname[0], prebuffer);
 	
 	// try to write system side first
 	fptr = fopen(CONF_LOG_PREFIX CONF_LOG, "a");
