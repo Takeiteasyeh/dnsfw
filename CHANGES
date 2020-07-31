@@ -1,7 +1,7 @@
                                                              )
           ,%,                                     ) _(___[]_
-          %%%,&&&, dnsfw.bacon.place   ,%%,      (;`       /\
-          %Y/%&&&&  rlynk@bacon.place  %%%%   ___/_____)__/ _\__     ,%%,
+          %%%,&&&, dnsfw.3rad.ca       ,%%,      (;`       /\
+          %Y/%&&&&  rlynk@3rad.ca      %%%%   ___/_____)__/ _\__     ,%%,
         ^^^||^&\Y&^^^^^^^^^^^^^^^^^^^^^%Y/%^^/ (_()   (  | /____/\^^^%%%%^^
           `    || _,..=xxxxxxxxxxxx,    ||   |(' |LI (.)I| | LI ||   %\Y%
          -=      /L_Y.-"""""""""`,-n-. `    @'---|__||___|_|____||_   ||
@@ -16,6 +16,16 @@
 # ! known issues
 # x fixes
 ################
+
+====================================
+=== v1.3 : August 30, 2020 ===
++
+* updated configuration. read UPGRADES file.
+* config: !fork has been deprecated.
+* code cleanup
+
+x fixed a buffer overflow in debug code.
+x fixed issue with make install not creating /etc/bacon
 
 ====================================
 === v1.2.0-rc1 : August 30, 2019 ===

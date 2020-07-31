@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 	run_dns_updates();
 
 
-	
+	/*
 	if ((FORKING == TRUE) || (forkable))
 	{
 		sprintf_log(DEBUG_INFO, "Falling to background...");
@@ -96,6 +96,7 @@ int main(int argc, char *argv[])
 	else
 		sprintf_log(DEBUG_INFO, "Skipping fork()...");
 
+	*/
 	sleep(30);
 	
 	while (1)

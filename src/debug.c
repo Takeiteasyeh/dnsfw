@@ -35,7 +35,7 @@ void to_log(int level, char *message)
 void sprintf_log(int level, char *format, ...)
 {
 	va_list parg;
-	char buffer[1024];
+	char buffer[5024];
 	char prebuffer[1024];
 	char timebuff[200];
 	char timebuff2[200];
@@ -56,7 +56,7 @@ void sprintf_log(int level, char *format, ...)
 
 	va_start(parg, format);
 	size_t buffsize = 1024;
-	buffsize = vsnprintf(prebuffer, buffsize, format, parg);
+	buffsize = vsnprintf(prebuffer, buffsize - 1, format, parg);
 
 	sprintf(timebuff, "%s", (asctime(localtime(&ltime))));
 	snprintf(timebuff2, strlen(timebuff), "%s", timebuff);
@@ -64,7 +64,7 @@ void sprintf_log(int level, char *format, ...)
 	char *lname;
 	lname = levelname(level);
 
-	sprintf(buffer, "[%s]<%c> %s\n", timebuff2, lname[0], prebuffer);
+	snprintf(buffer, sizeof(buffer) -1, "[%s]<%c> %s\n", timebuff2, lname[0], prebuffer);
 	
 	// try to write system side first
 	fptr = fopen(CONF_LOG_PREFIX CONF_LOG, "a");

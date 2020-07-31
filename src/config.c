@@ -124,16 +124,9 @@ int load_config(void)
 
 		if (sscanf(line, "!Fork:%d", &forkable))
 		{
-			if ((forkable != 0) && (forkable != 1))
-			{
-				sprintf_log(DEBUG_WARNING, "%s:%d -> Fork value is incorrect; defaulting to off.", CONF_FILE, linecount);
-				forkable = 0;
+				sprintf_log(DEBUG_WARNING, "%s:%d -> Fork is deprecated and can be removed.", CONF_FILE, linecount);
 
 				continue;
-			}
-
-			sprintf_log(DEBUG_INFO, "%s:%d -> set fork to %d", CONF_FILE, linecount, forkable);
-			continue;
 		}
 
 		if (sscanf(line, "!Block:%d", &block))
@@ -150,9 +143,11 @@ int load_config(void)
 			continue;
 		}
 
+		if (sscanf(line, "!Version:%d", &version))
 		// [! = 0x21 or  \33 ] [V = 0x56 or \86 ]
-		if ((line[0] == '!') && (line[1] == 'V') && (line[2] == 'e') && (line[3] == 'r') && (line[4] == 's') && (line[5] == 'i') && (line[6] == 'o') && (line[7] == 'n') && (line[8] == ':'))// version checking
+		//if ((line[0] == '!') && (line[1] == 'V') && (line[2] == 'e') && (line[3] == 'r') && (line[4] == 's') && (line[5] == 'i') && (line[6] == 'o') && (line[7] == 'n') && (line[8] == ':'))// version checking
 		{
+			/**
 			// version string
 			if (version > 0)
 			{
@@ -167,14 +162,16 @@ int load_config(void)
 				sprintf_log(DEBUG_ERROR, "%s:%d -> version %c is not numeric",  CONF_FILE, linecount, line[9]);
 				exit(0);
 			}
+			*/
+
 			// the version of our database is too old to continue in this way.
-			if ((int)line[9] < CONF_VERSION)
+			if (version < CONF_VERSION)
 			{
 				sprintf_log(DEBUG_ERROR, "%s:%d -> config version [%d] is too old (expected %d). Please see UPGRADE.TXT",  CONF_FILE, linecount, line[9], CONF_VERSION);
 				exit(0);
 			}
 
-			version = (int)line[9];
+		//	version = (int)line[9];
 			continue;
 		} // end of version tag
 
@@ -366,7 +363,7 @@ int valid_hostname(const char *host)
 
 	while (host[i] != '\0')
 	{
-		if (!isalpha(host[i]) && (host[i] != '-') && (host[i] != '.'))
+		if (!isalnum(host[i]) && (host[i] != '-') && (host[i] != '.'))
 			return FALSE;
 
 		i++;

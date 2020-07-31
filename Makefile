@@ -36,6 +36,7 @@ clean:
 
 install:
 	install -m 750 dnsfw /usr/sbin/
+	mkdir -p /etc/bacon
 	install -m 644 dnsfw.conf /etc/bacon/
 	@echo Please read INSTALL to continue.
 
