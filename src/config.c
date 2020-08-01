@@ -322,7 +322,7 @@ int load_config(void)
 				}
 
 				else
-					sprintf_log(DEBUG_INFO, "Adding: %s:%s ... " , curr->hostname, token);
+					sprintf_log(DEBUG_INFO, "Adding: %s:%d ... " , curr->hostname, atoi(token));
 
 				if ((atoi(token) < 0) || (atoi(token) > 65535)) // not a normal port
 				{

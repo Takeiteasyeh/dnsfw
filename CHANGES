@@ -19,7 +19,7 @@
 
 ====================================
 === v1.3 : August 30, 2020 ===
-+
++ implemented "last message repeats" for repetetive log entries.
 * updated configuration. read UPGRADES file.
 * config: !fork has been deprecated.
 * code cleanup

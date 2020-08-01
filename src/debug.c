@@ -19,9 +19,6 @@
 #include "config.h"
 
 extern int debugLevel;
-//char lasterror[1024];
-//int lastrepeatcount = 0;
-
 
 // just a shortcut to sprintf_log
 void to_log(int level, char *message)
@@ -65,8 +62,8 @@ void sprintf_log(int level, char *format, ...)
 	snprintf(timebuff2, strlen(timebuff), "%s", timebuff);
 
 	// check if this error is the same as the last error if a last error has been set
-	printf("Repeat(%d):\n now> %s\nlast> %s\n", lastrepeatcount, prebuffer, lasterror);
-	if (strncmp(prebuffer, lasterror, 1023) == 0)
+//	printf("Repeat(%d):\n now> %s\nlast> %s\n", lastrepeatcount, prebuffer, lasterror);
+	if (strncmp(prebuffer, lasterror, 1024) == 0)
 	{
 		lastrepeatcount++;
 		return;
@@ -79,7 +76,7 @@ void sprintf_log(int level, char *format, ...)
 		if (lastrepeatcount > 0)
 		{
 			snprintf(buffer, sizeof(buffer) - 1,
-					 "[%s] <R> Last error repeats %d more times\n[%s]<%c> %s\n", timebuff2, lastrepeatcount, timebuff2, lname[0], prebuffer);
+					 "[%s]<R> ** Above entry repeats %d more times **\n[%s]<%c> %s\n", timebuff2, lastrepeatcount, timebuff2, lname[0], prebuffer);
 		}
 
 		else
