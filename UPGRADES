@@ -3,3 +3,4 @@
 
 1) Change !Version number to 3
 2) Remove !Fork line
+3) you may use 0.0.0.0 as a hostname to open ports to the public

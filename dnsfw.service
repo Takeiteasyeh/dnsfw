@@ -1,5 +1,5 @@
 [Unit]
-Description=bdns firewall updater
+Description=dns firewall updater
 After=network.target
 
 [Service]
