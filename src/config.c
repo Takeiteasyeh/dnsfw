@@ -189,43 +189,43 @@ int load_config(void)
 			// we appear to have an integer debug level, not necessarily valid
 			if (userDebugLevel > 0)
 			{ 
-				char levelchars[10]; // to store our printable debug level
+				char levelchars[19]; // to store our printable debug level
 
 				int remainder = userDebugLevel;
 
 				// check all valid legit level
 				if ((userDebugLevel & DEBUG_NOTICE) != 0)
 				{
-					strcat(levelchars, "N");
+					strcat(levelchars, "Not");
 					remainder &= ~DEBUG_NOTICE;
 				}
 
 				if ((userDebugLevel & DEBUG_ERROR) != 0)
 				{
-					strcat(levelchars, "E");
+					strcat(levelchars, "Err");
 					remainder &= ~DEBUG_ERROR;
 				}
 
 				if ((userDebugLevel & DEBUG_WARNING) != 0)
 				{
-					strcat(levelchars, "W");
+					strcat(levelchars, "War");
 					remainder &= ~DEBUG_WARNING;
 				}
 
 				if ((userDebugLevel & DEBUG_INFO) != 0)
 				{
-					strcat(levelchars, "I");
+					strcat(levelchars, "Inf");
 					remainder &= ~DEBUG_INFO;
 				}
 
 				if ((userDebugLevel & DEBUG_DEBUG) != 0)
 				{
-					strcat(levelchars, "D");
+					strcat(levelchars, "Deb");
 					remainder &= ~DEBUG_DEBUG;
 				}
 				if ((userDebugLevel & DEBUG_TRACE) != 0)
 				{
-					strcat(levelchars, "T");
+					strcat(levelchars, "Tra");
 					remainder &= ~DEBUG_TRACE;
 				}
 
@@ -257,20 +257,20 @@ int load_config(void)
 				// dtui
 				if (strlen(token) > (sizeof(pheadhost->hostname) -1))
 				{
-					sprintf_log(DEBUG_ERROR, "%s:%d > Size of hostname exceeds allowed characters: %lu of max %d", CONF_FILE, linecount, strlen(token), DNS_SIZE);
+					sprintf_log(DEBUG_ERROR, "%s:%d > size of hostname exceeds allowed characters: %lu of max %d", CONF_FILE, linecount, strlen(token), DNS_SIZE);
 					exit(1);
 				}
 
 				if (!valid_hostname(token))
 				{
-					sprintf_log(DEBUG_ERROR, "%s:%d > Hostname '%s' has invalid characters", CONF_FILE, linecount, token);
+					sprintf_log(DEBUG_ERROR, "%s:%d > hostname '%s' has invalid characters", CONF_FILE, linecount, token);
 					exit(1);
 				}
 
 				// cycle and make sure we only have valid characters
 
 				curr = addhost(token);
-				sprintf_log(DEBUG_INFO, "host add: %s", curr->hostname);
+				sprintf_log(DEBUG_TRACE, "%s:%d > host add: %s", CONF_FILE, linecount, curr->hostname);
 				waitHost = 0; // mark that we are waiting for a port now
 			
 				
@@ -314,34 +314,34 @@ int load_config(void)
 			//	if ((!strncmp(token, "", 1)) && (atoi(token) == 0))
 				if (atoi(token) == 0)
 				{
-					sprintf_log(DEBUG_INFO, "Adding: %s:*all ... ", curr->hostname);
+					sprintf_log(DEBUG_INFO, "%s:%d > found: %s:fullaccess(0) ... ", CONF_FILE, linecount, curr->hostname);
 					curr->is_wildcard = TRUE;
 
 					if (curr->totalports > 0)
-						sprintf_log(DEBUG_INFO, "[usurps %d previous ports] ", curr->totalports);
+						sprintf_log(DEBUG_INFO, "%s:%d > warn: rule usurps %d previous ports] ", CONF_FILE, linecount, curr->totalports);
 				}
 
 				else
-					sprintf_log(DEBUG_INFO, "Adding: %s:%d ... " , curr->hostname, atoi(token));
+					sprintf_log(DEBUG_INFO, "%s:%d > found: %s:%d" , CONF_FILE, linecount, curr->hostname, atoi(token));
 
 				if ((atoi(token) < 0) || (atoi(token) > 65535)) // not a normal port
 				{
-					sprintf_log(DEBUG_ERROR, "Failed: %s port %d is outside range of 0(all) or 1-65535", curr->hostname, atoi(token));
+					sprintf_log(DEBUG_ERROR, "%s:%d > !!failed: %s port %d is outside range of 0(all) or 1-65535", CONF_FILE, linecount, curr->hostname, atoi(token));
 					exit(1);
 				}
 				// real work
 				if ((curr->is_wildcard) && (atoi(token) > 0))
-					sprintf_log(DEBUG_WARNING, "Failed: %s port %d Already applied via '0' entry", curr->hostname, atoi(token));
+					sprintf_log(DEBUG_WARNING, "%s:%d > !!failed: %s port %d Already applied via '0' entry", CONF_FILE, linecount, curr->hostname, atoi(token));
 
 				else if (addport(curr, atoi(token)))
 				{
-					sprintf_log(DEBUG_INFO, "Success: %s - %d/%d ports", curr->hostname, curr->totalports, MAX_PORTS);
+					sprintf_log(DEBUG_TRACE, "%s:%d > added: %s - %d/%d ports", CONF_FILE, linecount, curr->hostname, curr->totalports, MAX_PORTS);
 				}
 
 				else
 				{
 					if (curr->totalports == MAX_PORTS)
-						sprintf_log(DEBUG_WARNING, "Fail: %s max ports for this host reached!", curr->hostname);
+						sprintf_log(DEBUG_WARNING, "%s:%d > !!fail: %s max ports for this host reached!", CONF_FILE, linecount, curr->hostname);
 				}
 
 			}		

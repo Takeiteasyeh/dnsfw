@@ -28,6 +28,7 @@
 * config: !fork has been deprecated.
 * code cleanup
 
+! restart on iptables restart is working but has issues and is disabled.
 x fixed a buffer overflow in debug code.
 x fixed a bug not allowing numbers in hostnames *faceplant*
 x fixed issue with make install not creating /etc/bacon

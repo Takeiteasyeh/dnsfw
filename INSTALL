@@ -1,7 +1,7 @@
                                                          )
           ,%,                                     ) _(___[]_
-          %%%,&&&, dnsfw.bacon.place   ,%%,      (;`       /\
-          %Y/%&&&&  rlynk@bacon.place  %%%%   ___/_____)__/ _\__     ,%%,
+          %%%,&&&, dnsfw.3rad.ca       ,%%,      (;`       /\
+          %Y/%&&&&  rlynk@3rad.ca       %%%   ___/_____)__/ _\__     ,%%,
         ^^^||^&\Y&^^^^^^^^^^^^^^^^^^^^^%Y/%^^/ (_()   (  | /____/\^^^%%%%^^
           `    || _,..=xxxxxxxxxxxx,    ||   |(' |LI (.)I| | LI ||   %\Y%
          -=      /L_Y.-"""""""""`,-n-. `    @'---|__||___|_|____||_   ||
@@ -10,6 +10,7 @@
                 '-(_)-(_)----'v'-(_)--'
        jgs-----------------------------------------------------------------
 
+*** Install from source:
 1) Ensure a compatible gcc99 compiler is installed, also:
    ** iptables (v1.8.5 tested), iptables-persistent
 2) Modify config.h to match your tastes.
@@ -19,6 +20,11 @@
 6) systemd users: run 'make service'
 
 
+*** Install from binary:
+1) Grab your binary from https://dnsfw.3rad.ca/releases/
+2) tar -zxvf <file>
+3) nano dnsfw.conf to your liking
+4) sudo ./install
 
 Notes:
 

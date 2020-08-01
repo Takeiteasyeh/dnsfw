@@ -69,6 +69,7 @@ int main(int argc, char *argv[])
 
 	else if (getuid() > 0)
 	{
+		printf("Use root\n");
 		sprintf_log(DEBUG_ERROR, "error: please run as root, terminating.");
 		exit(1);
 	}
@@ -102,8 +103,8 @@ int main(int argc, char *argv[])
 	{
 		if (has_iptables_restarted())
 		{
-			sprintf_log(DEBUG_INFO, "iptables -> pid changed, restarting.");
-			restart();
+			sprintf_log(DEBUG_INFO, "iptables -> pid changed, *NOT* restarting due to bug.");
+			//restart();
 		}
 
 		run_dns_updates();
@@ -275,7 +276,7 @@ void run_dns_updates(void)
 		// we need to update this entry
 		else
 		{
-			sprintf_log(DEBUG_INFO, "%s is %s [old is %s]", cycle->hostname, ip, (cycle->currentIp[0] == 0 ? "not set" : cycle->currentIp));
+			sprintf_log(DEBUG_INFO, "%s is now %s (old was %s)", cycle->hostname, ip, (cycle->currentIp[0] == '0' ? "not set" : cycle->currentIp));
 			// if ip is not 0 we do need to remove old entries
 			if (strcmp(cycle->currentIp, "0") != 0)
 			{
@@ -292,7 +293,7 @@ void run_dns_updates(void)
 				// send it to iptables and then copy ip to our object
 				iptables_add(ip, 0);
 				strncpy(cycle->currentIp, ip, sizeof(cycle->currentIp) -1);
-				sprintf_log(DEBUG_INFO, "%s [%s] wildip updated!", cycle->hostname, cycle->currentIp);
+				sprintf_log(DEBUG_INFO, "`--- updated port: full-access(0)");
 
 				// we MUST continue from here on our loop
 				// as having ports as wildcard is undefined.
@@ -313,7 +314,7 @@ void run_dns_updates(void)
 				}
 
 				iptables_add(ip, cycle->ports[i]);
-				sprintf_log(DEBUG_INFO, "%s added %d", cycle->hostname, cycle->ports[i]);
+				sprintf_log(DEBUG_INFO, "`--- updated port: %d", cycle->ports[i]);
 			}
 
 			strncpy(cycle->currentIp, ip, sizeof(cycle->currentIp) -1);
@@ -395,6 +396,7 @@ int has_iptables_restarted(void)
 			// pid is different
 			else
 			{
+				iptables_pid = pid;
 				return TRUE;
 			}
 			 
@@ -412,6 +414,9 @@ int has_iptables_restarted(void)
  */
 void restart()
 {
+	// not quite working as intended..
+	return; 
+
 	char *args[]={ NULL};
 	// shutdown code, without exit, and then execv to a new instance?
 	to_log(DEBUG_INFO, "restart: removing iptable entries...");
