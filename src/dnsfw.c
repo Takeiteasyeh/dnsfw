@@ -58,9 +58,9 @@ int main(int argc, char *argv[])
 	if (signal(SIGTERM, sig_handle) == SIG_ERR)
 		to_log(DEBUG_WARNING, "Unable to catch SIGTERM handle");
 //	printf("file: %x", CONFIG_FILE_ORIG);
-	sprintf_log(DEBUG_INFO, "dnsfw v%s [debug %d] starting.", getversion(), debugLevel);
+	sprintf_log(DEBUG_INFO, "dnsfw v%s [debug level %d] starting.", getversion(), debugLevel);
 	sprintf_log(DEBUG_INFO, "built: %s with gcc%d.%d", __DATE__, __GNUC__, __GNUC_MINOR__);
-	sprintf_log(DEBUG_INFO, "author: rlynk@bacon.place - dnsfw.bacon.place");
+	sprintf_log(DEBUG_INFO, "author: rlynk@3rad.ca - dnsfw.3rad.ca");
 
 	// we need to run as root?
 	if (NEEDROOT == FALSE)
@@ -229,15 +229,30 @@ void run_dns_updates(void)
 	{
 		char *ip = resolve(cycle->hostname);
 		int remove = FALSE;
+		int preskip = 0;
+		
+		// if the ip is 0.0.0.0 but hostname isnt than we resolved a real host to 0.0.0.0, which is forbidden.
+		if ((strcmp(cycle->hostname, "0.0.0.0") > 0) && (strcmp(ip, "0.0.0.0") == 0))
+		{
+			sprintf_log(DEBUG_WARNING, "Danger: %s resolves to 0.0.0.0 (all ips) and will be skipped", cycle->hostname, ip, cycle->currentIp);
+			ip = NULL; // reset the ip to null for clearing if needed.
+			preskip = 1;
+		}
 
 		if (ip == NULL)
 		{
-			// if we already have an ip we will remove it for security
+			// if we dont have a current ip, log and move on
 			if (strcmp(cycle->currentIp, "0") == 0)
 			{
-				sprintf_log(DEBUG_INFO, "%s does not resolve, is ipv6, or resolves more than once, skipping.", cycle->hostname);
+				if (preskip == 0)
+				{
+					sprintf_log(DEBUG_INFO, "%s does not resolve, is ipv6, or resolves more than once, skipping.", cycle->hostname);
+				}
+				
+				preskip = 0;
 				cycle = cycle->next;
 				continue;
+				
 			}
 
 			//this is a removal without a new entry.
@@ -270,8 +285,6 @@ void run_dns_updates(void)
 				cycle = cycle->next;
 				continue;
 			}
-
-
 		}
 
 		// if new ip is same as current we also continue.
@@ -279,7 +292,7 @@ void run_dns_updates(void)
 		{
 			cycle = cycle->next;
 			continue;
-		}
+		}			
 
 		// we need to update this entry
 		else

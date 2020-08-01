@@ -20,6 +20,7 @@
 ====================================
 === v1.3 : August 30, 2020 ===
 + implemented "last message repeats" for repetetive log entries.
+* while 0.0.0.0 is a valid dns name in configuration, 0.0.0.0 will not be allowed in dns lookups and will be rejected.
 * updated configuration. read UPGRADES file.
 * config: !fork has been deprecated.
 * code cleanup
