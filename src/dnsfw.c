@@ -100,6 +100,12 @@ int main(int argc, char *argv[])
 	
 	while (1)
 	{
+		if (has_iptables_restarted())
+		{
+			sprintf_log(DEBUG_INFO, "iptables -> pid changed, restarting.");
+			restart();
+		}
+
 		run_dns_updates();
 
 		sleep(WAIT_TIME);
@@ -343,6 +349,62 @@ void sig_handle(int sig)
 
 }
 
+int has_iptables_restarted(void)
+{
+	FILE *pfile;
+	char *line;
+	size_t length;
+	size_t read;
+	static int iptables_pid=0; // current/last pid
+//	static int has_error=FALSE; // report errors once
+	int pid = 0; // parsed pid
+	char b;
+
+	pfile = popen("service iptables status", "r");
+
+	if (!pfile)
+		return -1;
+
+	while ((read = getline(&line, &length, pfile)) != -1)
+	{
+		//printf("%s", line);
+		
+		//   Main PID: 48718 (code=exited, status=0/SUCCESS)
+		if (sscanf(line, "%*s PID: %s %*s", &b))
+		{
+			pid = atoi(&b);
+			pclose(pfile);
+
+			//iif error and recovery, restart
+			if (iptables_pid == -1)
+				return TRUE;
+
+			// same pid, we are fine
+			if (iptables_pid == pid)
+				return FALSE;
+
+			// first pid, set and carry on
+			if (iptables_pid == 0)
+			{
+			//	iptables_pid = pid;
+				sprintf_log(DEBUG_INFO, "iptables -> found pid: %d", pid);
+				iptables_pid = pid;
+				return FALSE;
+			}
+
+			// pid is different
+			else
+			{
+				return TRUE;
+			}
+			 
+		}
+	} 
+
+	pclose(pfile);
+	return -1;
+
+}
 /***
  * Restart the application. Using this
  * function will prevent a future call to HUP

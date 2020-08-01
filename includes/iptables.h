@@ -25,4 +25,4 @@
 
 void iptables_add(char *ip, int port);
 void iptables_del(char *ip, int port);// full applies to both protocols
-void iptables_initialize_blocks();
+void iptables_initialize_blocks(int destroy);

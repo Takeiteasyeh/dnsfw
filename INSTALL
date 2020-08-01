@@ -10,19 +10,20 @@
                 '-(_)-(_)----'v'-(_)--'
        jgs-----------------------------------------------------------------
 
-1) Ensure a compatible gcc99 compiler is installed.
+1) Ensure a compatible gcc99 compiler is installed, also:
+   ** iptables (v1.8.5 tested), iptables-persistent
 2) Modify config.h to match your tastes.
 3) make
 4) Modify dnsfw.conf as required.
 5) make install
 6) systemd users: run 'make service'
-7) figure out a startup method
+
 
 
 Notes:
 
 * binaries are installed to /usr/sbin/dnsfw
-* config is discoverable at /etc/dnsfw.conf
+* config is discoverable at /etc/bacon/dnsfw.conf
 * log file is writable at /var/log/dnsfw.log
 
 (if log or config is not readable/writable in their

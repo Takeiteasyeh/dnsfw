@@ -27,3 +27,4 @@ void sig_handle(int sig);
 void shutdown_gracefully(void);
 void restart(void);
 void clear_iptable_entries(void);
+int has_iptables_restarted(void);
