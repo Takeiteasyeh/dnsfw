@@ -15,34 +15,43 @@
  #include "iptables.h"
  #include "debug.h"
 
-void iptables_initialize_blocks()
+void iptables_initialize_blocks(const int is_destroy)
 {
 	char cmd[700];
 	char *p;
+	char *addremove;
+
+	if (is_destroy == 0)
+		addremove = "A";
+	
+	else
+		addremove = "D";
+	
+	
 	p = cmd;
-	to_log(DEBUG_INFO, "setting default firewall rules");
+	sprintf_log(DEBUG_INFO, "%s default firewall rules", (is_destroy == 1 ? "removing" : "setting"));
 
-	sprintf(cmd, IPTF_DEFAULT_ESTABLISHED);
+	sprintf(cmd, IPTF_DEFAULT_ESTABLISHED, addremove);
 	to_log(DEBUG_TRACE, cmd);
 	system(p);
 
-	sprintf(cmd, IPTF_DEFAULT_OUTBOUND);
+	sprintf(cmd, IPTF_DEFAULT_OUTBOUND, addremove);
 	to_log(DEBUG_TRACE, cmd);
 	system(p);
 
-	sprintf(cmd, IPTF_DEFAULT_ICMP);
+	sprintf(cmd, IPTF_DEFAULT_ICMP, addremove);
 	to_log(DEBUG_TRACE, cmd);
 	system(p);
 
-	sprintf(cmd, IPTF_DEFAULT_REJECT_INPUT);
+	sprintf(cmd, IPTF_DEFAULT_REJECT_INPUT, addremove);
 	to_log(DEBUG_TRACE, cmd);
 	system(p);
 
-	sprintf(cmd, IPTF_DEFAULT_REJECT_FORWARD);
+	sprintf(cmd, IPTF_DEFAULT_REJECT_FORWARD, addremove);
 	to_log(DEBUG_TRACE, cmd);
 	system(p);
 
-	to_log(DEBUG_INFO, "default firewalls rules complete.");
+	sprintf_log(DEBUG_INFO, "default firewall rules %s.", (is_destroy == 1 ? "removed" : "added"));
 }
 
  void iptables_add(char *ip, int port)

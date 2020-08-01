@@ -58,6 +58,7 @@ int main(int argc, char *argv[])
 	if (signal(SIGTERM, sig_handle) == SIG_ERR)
 		to_log(DEBUG_WARNING, "Unable to catch SIGTERM handle");
 //	printf("file: %x", CONFIG_FILE_ORIG);
+	sprintf_log(DEBUG_INFO, "-------------------");
 	sprintf_log(DEBUG_INFO, "dnsfw v%s starting.", getversion());
 	sprintf_log(DEBUG_INFO, "built: %s %s with gcc%d.%d", __DATE__, __TIME__, __GNUC__, __GNUC_MINOR__);
 	sprintf_log(DEBUG_INFO, "author: rlynk@3rad.ca - dnsfw.3rad.ca");
@@ -86,9 +87,9 @@ int main(int argc, char *argv[])
 	if (block)
 	{
 				// remove open ssh access
-		sprintf_log(DEBUG_INFO, "fw -> removing emergency 0.0.0.0:ssh");
-		iptables_del("0.0.0.0", 22);
-		iptables_initialize_blocks();
+	//	sprintf_log(DEBUG_INFO, "fw -> removing emergency 0.0.0.0:ssh");
+	//	iptables_del("0.0.0.0", 22);
+		iptables_initialize_blocks(0);
 	}
 	sprintf_log(DEBUG_INFO, "running first cycle");
 	run_dns_updates();
@@ -331,6 +332,7 @@ void sig_handle(int sig)
 			break; //unreachable code
 
 		case SIGHUP:
+			to_log(DEBUG_INFO, "performing restart from sighup...");
 			restart();
 			break; //unreachable
 
@@ -415,8 +417,9 @@ void clear_iptable_entries(void)
 	// open up ssh on exit for emergency access, but revoke it again next startup.
 	if (block)
 	{
-		iptables_add("0.0.0.0", 22);
-		sprintf_log(DEBUG_INFO, "fw -> open emergency 0.0.0.0:ssh due to block=1");
+		iptables_initialize_blocks(1);
+		//iptables_add("0.0.0.0", 22);
+		//sprintf_log(DEBUG_INFO, "fw -> open emergency 0.0.0.0:ssh due to block=1");
 	}
 }
 
