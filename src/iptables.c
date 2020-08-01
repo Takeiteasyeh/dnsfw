@@ -15,6 +15,36 @@
  #include "iptables.h"
  #include "debug.h"
 
+void iptables_initialize_blocks()
+{
+	char cmd[700];
+	char *p;
+	p = cmd;
+	to_log(DEBUG_INFO, "setting default firewall rules");
+
+	sprintf(cmd, IPTF_DEFAULT_ESTABLISHED);
+	to_log(DEBUG_TRACE, cmd);
+	system(p);
+
+	sprintf(cmd, IPTF_DEFAULT_OUTBOUND);
+	to_log(DEBUG_TRACE, cmd);
+	system(p);
+
+	sprintf(cmd, IPTF_DEFAULT_ICMP);
+	to_log(DEBUG_TRACE, cmd);
+	system(p);
+
+	sprintf(cmd, IPTF_DEFAULT_REJECT_INPUT);
+	to_log(DEBUG_TRACE, cmd);
+	system(p);
+
+	sprintf(cmd, IPTF_DEFAULT_REJECT_FORWARD);
+	to_log(DEBUG_TRACE, cmd);
+	system(p);
+
+	to_log(DEBUG_INFO, "default firewalls rules complete.");
+}
+
  void iptables_add(char *ip, int port)
  {
 	 //FILE *p;

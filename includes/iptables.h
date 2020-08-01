@@ -14,7 +14,15 @@
 #define IPTF_ADD_FULL "iptables -A INPUT -s %s/32 -j ACCEPT\n"
 #define IPTF_DEL_ONE "iptables -D INPUT -s %s/32 -p %s --dport %d -j ACCEPT\n"
 #define IPTF_DEL_FULL "iptables -D INPUT -s %s/32 -j ACCEPT\n"
-#define IPTABLES_BINARY2 "/sbin/iptables"
+//#define IPTABLES_BINARY2 "/sbin/iptables"
+
+// default ip table rules
+#define IPTF_DEFAULT_ESTABLISHED "iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT\n"
+#define IPTF_DEFAULT_OUTBOUND "iptables -A OUTPUT -j ACCEPT\n"
+#define IPTF_DEFAULT_ICMP "iptables -A INPUT -p icmp -j ACCEPT\n"
+#define IPTF_DEFAULT_REJECT_INPUT "iptables -A INPUT -j REJECT\n"
+#define IPTF_DEFAULT_REJECT_FORWARD "iptables -A FORWARD -j REJECT\n"
 
 void iptables_add(char *ip, int port);
 void iptables_del(char *ip, int port);// full applies to both protocols
+void iptables_initialize_blocks();

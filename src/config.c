@@ -139,7 +139,7 @@ int load_config(void)
 				continue;
 			}
 
-			sprintf_log(DEBUG_INFO, "%s:%d -> set blocking to %d", CONF_FILE, linecount, block);
+			sprintf_log(DEBUG_INFO, "%s:%d -> set blocking to %s", CONF_FILE, linecount, (block == 1 ? "on" : "off"));
 			continue;
 		}
 
@@ -236,7 +236,7 @@ int load_config(void)
 					continue;
 				}
 
-				sprintf_log(DEBUG_INFO, "%s:%d set debug levels [%s]", CONF_FILE, linecount, levelchars);
+				sprintf_log(DEBUG_INFO, "%s:%d -> set debug levels [%s]", CONF_FILE, linecount, levelchars);
 				debugLevel = userDebugLevel;
 
 				continue;

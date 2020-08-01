@@ -20,6 +20,9 @@
 ====================================
 === v1.3 : August 30, 2020 ===
 + implemented "last message repeats" for repetetive log entries.
++ !block is now a valid config item. 
++ closing dnwfw with block=1 will result in a 0.0.0.0:ssh port being opened till restart of service.
++ 0.0.0.0 has been added as a wild host in config to allow all ips to access listed ports.
 * while 0.0.0.0 is a valid dns name in configuration, 0.0.0.0 will not be allowed in dns lookups and will be rejected.
 * updated configuration. read UPGRADES file.
 * config: !fork has been deprecated.

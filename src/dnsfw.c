@@ -58,8 +58,8 @@ int main(int argc, char *argv[])
 	if (signal(SIGTERM, sig_handle) == SIG_ERR)
 		to_log(DEBUG_WARNING, "Unable to catch SIGTERM handle");
 //	printf("file: %x", CONFIG_FILE_ORIG);
-	sprintf_log(DEBUG_INFO, "dnsfw v%s [debug level %d] starting.", getversion(), debugLevel);
-	sprintf_log(DEBUG_INFO, "built: %s with gcc%d.%d", __DATE__, __GNUC__, __GNUC_MINOR__);
+	sprintf_log(DEBUG_INFO, "dnsfw v%s starting.", getversion());
+	sprintf_log(DEBUG_INFO, "built: %s %s with gcc%d.%d", __DATE__, __TIME__, __GNUC__, __GNUC_MINOR__);
 	sprintf_log(DEBUG_INFO, "author: rlynk@3rad.ca - dnsfw.3rad.ca");
 
 	// we need to run as root?
@@ -82,23 +82,19 @@ int main(int argc, char *argv[])
 	
 	load_config();
 
-	sprintf_log(DEBUG_INFO, "Doing first run...");
+	// do we need to now install default rules?
+	if (block)
+	{
+				// remove open ssh access
+		sprintf_log(DEBUG_INFO, "fw -> removing emergency 0.0.0.0:ssh");
+		iptables_del("0.0.0.0", 22);
+		iptables_initialize_blocks();
+	}
+	sprintf_log(DEBUG_INFO, "running first cycle");
 	run_dns_updates();
 
 
-	/*
-	if ((FORKING == TRUE) || (forkable))
-	{
-		sprintf_log(DEBUG_INFO, "Falling to background...");
-		
-		if (fork() > 0) // parent exit!
-			exit(0);
-	}
 
-	else
-		sprintf_log(DEBUG_INFO, "Skipping fork()...");
-
-	*/
 	sleep(30);
 	
 	while (1)
@@ -177,31 +173,6 @@ void process_cli_help_param(char *topic)
 		printf("# -g | --genconf      You will be prompted.\n");
 	}
 
-/* unused now, possibly deprecated
-	else if (strncmp(topic, "list", 6) == 0)
-	{
-		printf("# bdnsfw: help list\n");
-		printf("# description: Lists all rDNS hosts we monitor.\n");
-		printf("#\n");
-		printf("# -l | --list          Takes no parameters.\n");
-	}
-
-	else if (strncmp(topic, "add", 6) == 0)
-	{
-		printf("# bdnsfw: help add\n");
-		printf("# description: Add to the rDNS hosts.\n");
-		printf("#\n");
-		printf("# -a | --add          You will be prompted.n");
-	}
-
-	else if (strncmp(topic, "remove", 6) == 0)
-	{
-		printf("# bdnsfw: help remove\n");
-		printf("# description: Remove from the rDNS hosts.\n");
-		printf("#\n");
-		printf("# -r | --remove [host]      Removes the given host\n");
-	}
-*/
 	else if (strncmp(topic, "fork", 6) == 0)
 	{
 		printf("# bdnsfw: help remove\n");
@@ -232,7 +203,7 @@ void run_dns_updates(void)
 		int preskip = 0;
 		
 		// if the ip is 0.0.0.0 but hostname isnt than we resolved a real host to 0.0.0.0, which is forbidden.
-		if ((strcmp(cycle->hostname, "0.0.0.0") > 0) && (strcmp(ip, "0.0.0.0") == 0))
+		if ((strcmp(cycle->hostname, "0.0.0.0") > 0) && (ip != NULL) && (strcmp(ip, "0.0.0.0") == 0))
 		{
 			sprintf_log(DEBUG_WARNING, "Danger: %s resolves to 0.0.0.0 (all ips) and will be skipped", cycle->hostname, ip, cycle->currentIp);
 			ip = NULL; // reset the ip to null for clearing if needed.
@@ -297,7 +268,7 @@ void run_dns_updates(void)
 		// we need to update this entry
 		else
 		{
-			sprintf_log(DEBUG_INFO, "%s is %s [old is %s]", cycle->hostname, ip, cycle->currentIp);
+			sprintf_log(DEBUG_INFO, "%s is %s [old is %s]", cycle->hostname, ip, (cycle->currentIp[0] == 0 ? "not set" : cycle->currentIp));
 			// if ip is not 0 we do need to remove old entries
 			if (strcmp(cycle->currentIp, "0") != 0)
 			{
@@ -405,7 +376,6 @@ void shutdown_gracefully(void)
 void clear_iptable_entries(void)
 {
 	host *cycle;
-
 	cycle = pheadhost;
 
 	while (cycle != NULL)
@@ -439,6 +409,14 @@ void clear_iptable_entries(void)
 		}
 
 		cycle = cycle->next;
+	}
+
+	// we dont remove blocking rules for security reasons. If blocking is set
+	// open up ssh on exit for emergency access, but revoke it again next startup.
+	if (block)
+	{
+		iptables_add("0.0.0.0", 22);
+		sprintf_log(DEBUG_INFO, "fw -> open emergency 0.0.0.0:ssh due to block=1");
 	}
 }
 
