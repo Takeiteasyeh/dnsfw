@@ -19,8 +19,8 @@
 #include "config.h"
 
 extern int debugLevel;
-char lasterror[1024];
-int lastrepeatcount = 0;
+//char lasterror[1024];
+//int lastrepeatcount = 0;
 
 
 // just a shortcut to sprintf_log
@@ -36,6 +36,8 @@ void to_log(int level, char *message)
  */
 void sprintf_log(int level, char *format, ...)
 {
+	static int lastrepeatcount;
+	static char lasterror[1024];
 	va_list parg;
 	char buffer[5024];
 	char prebuffer[1024];
@@ -67,6 +69,7 @@ void sprintf_log(int level, char *format, ...)
 	if (strncmp(prebuffer, lasterror, 1023) == 0)
 	{
 		lastrepeatcount++;
+		return;
 	}
 
 	// not the same
