@@ -18,15 +18,17 @@
 ################
 
 ====================================
-=== v1.3 : August 30, 2020 ===
+=== v1.3.0-stable : August 2, 2020 ===
 + implemented "last message repeats" for repetetive log entries.
 + !block is now a valid config item. 
 + closing dnsfw will revert the firewall back to its natural state.
 + 0.0.0.0 has been added as a wild host in config to allow all ips to access listed ports.
++ added make binary to build chain
++ added install.sh to install binary release package.
 * while 0.0.0.0 is a valid dns name in configuration, 0.0.0.0 will not be allowed in dns lookups and will be rejected.
 * updated configuration. read UPGRADES file.
 * config: !fork has been deprecated.
-* code cleanup
+* code cleanup, visual updates.
 
 ! restart on iptables restart is working but has issues and is disabled.
 x fixed a buffer overflow in debug code.
