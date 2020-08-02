@@ -19,6 +19,8 @@
 // default ip table rules
 #define IPTF_DEFAULT_ESTABLISHED "iptables -%s INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT\n"
 #define IPTF_DEFAULT_OUTBOUND "iptables -%s OUTPUT -j ACCEPT\n"
+#define IPTF_DEFAULT_LO_IN "iptables -%s INPUT -i lo -j ACCEPT\n"
+#define IPTF_DEFAULT_LO_OUT "iptables -%s OUTPUT -o lo -j ACCEPT\n"
 #define IPTF_DEFAULT_ICMP "iptables -%s INPUT -p icmp -j ACCEPT\n"
 #define IPTF_DEFAULT_REJECT_INPUT "iptables -%s INPUT -j REJECT\n"
 #define IPTF_DEFAULT_REJECT_FORWARD "iptables -%s FORWARD -j REJECT\n"

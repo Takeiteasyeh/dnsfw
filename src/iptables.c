@@ -43,6 +43,14 @@ void iptables_initialize_blocks(const int is_destroy)
 	to_log(DEBUG_TRACE, cmd);
 	system(p);
 
+	sprintf(cmd, IPTF_DEFAULT_LO_IN, addremove);
+	to_log(DEBUG_TRACE, cmd);
+	system(p);
+
+	sprintf(cmd, IPTF_DEFAULT_LO_OUT, addremove);
+	to_log(DEBUG_TRACE, cmd);
+	system(p);
+
 	sprintf(cmd, IPTF_DEFAULT_REJECT_INPUT, addremove);
 	to_log(DEBUG_TRACE, cmd);
 	system(p);

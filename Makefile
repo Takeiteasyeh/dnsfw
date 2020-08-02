@@ -61,7 +61,7 @@ binary:
 	make clean
 	make
 	@echo moving files to ~/dnsfw-release/
-	mkdir ~/dnsfw-release
+	mkdir -p ~/dnsfw-release
 	cp dnsfw.conf ~/dnsfw-release/
 	cp CHANGES ~/dnsfw-release/
 	cp INSTALL ~/dnsfw-release/
