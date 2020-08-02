@@ -55,3 +55,18 @@ service:
 	systemctl enable dnsfw.service
 	systemctl start dnsfw.service
 	@echo Done.
+
+binary:
+	@echo cleaning and building...
+	make clean
+	make
+	@echo moving files to ~/dnsfw-release/
+	mkdir ~/dnsfw-release
+	cp dnsfw.conf ~/dnsfw-release/
+	cp CHANGES ~/dnsfw-release/
+	cp INSTALL ~/dnsfw-release/
+	cp install.sh ~/dnsfw-release/
+	cp UPGRADES ~/dnsfw-release/
+	cp dnsfw ~/dnsfw-release/
+	cp dnsfw.service ~/dnsfw-release
+
